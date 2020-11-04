@@ -1,0 +1,8 @@
+# javascript
+/dist
+
+# dependencies
+/node_modules
+
+# production
+/build
