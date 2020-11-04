@@ -4,43 +4,36 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Entry } from "./Entry";
 import { Heart } from "./Heart";
-import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Entry extends BaseEntity {
+export class User extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  creatorId: number;
+  @OneToMany(() => Entry, entry => entry.creator)
+  entries: Entry[];
 
-  @Field({ nullable: true })
-  @ManyToOne(() => User, (user) => user.entries, { nullable: true })
-  creator: User;
-
-  @OneToMany(() => Heart, (heart) => heart.entry)
+  @OneToMany(() => Heart, heart => heart.user)
   hearts: Heart[];
 
   @Field()
   @Column()
-  title!: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  text: string;
+  username!: string;
 
   @Field()
-  @Column({ type: "int", default: 0 })
-  points!: number;
+  @Column()
+  email!: string;
+
+  @Column()
+  password!: string;
 
   @Field(() => String)
   @CreateDateColumn()

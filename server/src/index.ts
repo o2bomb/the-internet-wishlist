@@ -5,6 +5,9 @@ import path from "path";
 import { createConnection } from "typeorm";
 import { Entry } from "./entities/Entry";
 import { HelloResolver } from "./resolvers/hello";
+import { Heart } from "./entities/Heart";
+import { User } from "./entities/User";
+import { EntryResolver } from "./resolvers/entry";
 
 const main = async () => {
   const conn = await createConnection({
@@ -14,16 +17,18 @@ const main = async () => {
     port: 5433,
     logging: true,
     synchronize: true, // makes sure entities are synced with database
-    entities: [Entry],
+    entities: [Entry, User, Heart],
     migrations: [path.join(__dirname, "./migrations/*")],
   });
   await conn.runMigrations();
+
+  // await Entry.delete()
 
   const app = express();
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver],
+      resolvers: [HelloResolver, EntryResolver],
       validate: false,
     }),
   });
