@@ -1,5 +1,5 @@
 import {
-  Column,
+  BaseEntity,
   Entity,
   ManyToOne,
   PrimaryColumn
@@ -8,10 +8,7 @@ import { Entry } from "./Entry";
 import { User } from "./User";
 
 @Entity()
-export class Heart {
-  @Column({ type: "int"})
-  value: number;
-
+export class Heart extends BaseEntity {
   @PrimaryColumn()
   userId: number;
 

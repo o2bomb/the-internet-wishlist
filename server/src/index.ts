@@ -13,6 +13,8 @@ import { User } from "./entities/User";
 import { EntryResolver } from "./resolvers/entry";
 import { UserResolver } from "./resolvers/user";
 import { COOKIE_NAME, __prod__ } from "./constants";
+import { EntryTag } from "./entities/EntryTag";
+import { Tag } from "./entities/Tag";
 
 const main = async () => {
   const conn = await createConnection({
@@ -22,7 +24,7 @@ const main = async () => {
     port: 5433,
     logging: true,
     synchronize: true, // makes sure entities are synced with database
-    entities: [Entry, User, Heart],
+    entities: [Entry, User, Heart, Tag, EntryTag],
     migrations: [path.join(__dirname, "./migrations/*")],
   });
   await conn.runMigrations();

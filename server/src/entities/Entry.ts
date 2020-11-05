@@ -1,4 +1,4 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -9,7 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { EntryTag } from "./EntryTag";
 import { Heart } from "./Heart";
+import { Tag } from "./Tag";
 import { User } from "./User";
 
 @ObjectType()
@@ -30,6 +32,9 @@ export class Entry extends BaseEntity {
   @OneToMany(() => Heart, (heart) => heart.entry)
   hearts: Heart[];
 
+  @OneToMany(() => EntryTag, (tag) => tag.entry)
+  tags: EntryTag[];
+
   @Field()
   @Column()
   title!: string;
@@ -38,9 +43,8 @@ export class Entry extends BaseEntity {
   @Column({ nullable: true })
   text: string;
 
-  @Field()
-  @Column({ type: "int", default: 0 })
-  points!: number;
+  @Field(() => Int)
+  points: number;
 
   @Field(() => String)
   @CreateDateColumn()

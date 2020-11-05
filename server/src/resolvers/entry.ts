@@ -14,12 +14,44 @@ import { isAuth } from "../middlewares/isAuth";
 import { MyContext } from "../types";
 import { Entry } from "../entities/Entry";
 import { User } from "../entities/User";
+import { Heart } from "../entities/Heart";
 
 @Resolver(Entry)
 export class EntryResolver {
+  @FieldResolver(() => Int)
+  async points(@Root() entry: Entry) {
+    const [, heartCount] = await Heart.findAndCount({
+      where: { entryId: entry.id },
+    });
+    return heartCount;
+  }
+
   @FieldResolver(() => User, { nullable: true })
   creator(@Root() entry: Entry) {
     return User.findOne({ id: entry.creatorId });
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async heartEntry(
+    @Arg("id", () => Int) id: number,
+    @Arg("deleteHeart", () => Boolean) deleteHeart: boolean,
+    @Ctx() { req }: MyContext
+  ) {
+    const { userId } = req.session;
+    const heart = await Heart.findOne({ where: { entryId: id, userId } });
+
+    if (deleteHeart) {
+      // Delete heart if user is unhearting entry
+      await Heart.delete({ entryId: id, userId });
+    } else if (!heart) {
+      // Only create a new heart if it doesn't exist
+      await Heart.create({
+        entryId: id,
+        userId,
+      }).save();
+    }
+    return true;
   }
 
   @Query(() => Entry, { nullable: true })
