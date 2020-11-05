@@ -27,7 +27,7 @@ const main = async () => {
   });
   await conn.runMigrations();
 
-  // await Entry.delete({})
+  // await Entry.delete({});
   // await User.delete({});
 
   const app = express();
