@@ -3,11 +3,13 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   InputType,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 import { MyContext } from "../types";
 import { validateRegister } from "../utils/validateRegister";
@@ -42,6 +44,15 @@ export class UsernamePasswordInput {
 
 @Resolver(User)
 export class UserResolver {
+  @FieldResolver(() => String)
+  email(@Root() user: User, @Ctx() { req }: MyContext) {
+    // Only reveal email if it belongs to the logged in user
+    if (req.session.userId === user.id) {
+      return user.email;
+    }
+    return "";
+  }
+
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext): Promise<User | undefined> {
     return User.findOne({ id: req.session.userId });
