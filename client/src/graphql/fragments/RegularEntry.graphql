@@ -1,0 +1,12 @@
+fragment RegularEntry on Entry {
+  id
+  creatorId
+  creator {
+    ...RegularUser
+  }
+  title
+  text
+  points
+  createdAt
+  updatedAt
+}

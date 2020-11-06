@@ -1,0 +1,5 @@
+mutation CreateEntry($title: String!, $text: String!) {
+  createEntry(title: $title, text: $text) {
+    ...RegularEntry
+  }
+}

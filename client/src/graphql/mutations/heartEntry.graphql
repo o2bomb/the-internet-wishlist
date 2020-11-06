@@ -1,0 +1,3 @@
+mutation HeartEntry($id: Int!, $deleteHeart: Boolean!) {
+    heartEntry(id: $id, deleteHeart: $deleteHeart)
+}

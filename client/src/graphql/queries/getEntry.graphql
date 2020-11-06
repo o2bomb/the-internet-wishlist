@@ -1,0 +1,5 @@
+query GetEntry($id: Int!) {
+  entry(id: $id) {
+    ...RegularEntry
+  }
+}
