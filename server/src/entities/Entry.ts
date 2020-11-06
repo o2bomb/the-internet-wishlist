@@ -7,11 +7,10 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from "typeorm";
 import { EntryTag } from "./EntryTag";
 import { Heart } from "./Heart";
-import { Tag } from "./Tag";
 import { User } from "./User";
 
 @ObjectType()
