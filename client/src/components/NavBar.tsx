@@ -1,5 +1,5 @@
-import React from 'react'
-import { Avatar, Box, Button, Flex, Heading, Icon, IconButton, Input, InputGroup, InputLeftElement } from '@chakra-ui/core';
+import { Box, Button, Flex, Heading, Icon, IconButton, Input, InputGroup, InputLeftElement } from '@chakra-ui/core';
+import React from 'react';
 
 interface NavBarProps {
 
