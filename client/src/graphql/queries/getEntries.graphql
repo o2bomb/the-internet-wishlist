@@ -4,5 +4,6 @@ query GetEntries($limit: Int!, $cursor: String) {
             ...RegularEntry
         }
         hasMore
+        cursor
     }
 }

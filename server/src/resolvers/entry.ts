@@ -24,6 +24,8 @@ class PaginatedEntries {
   entries: Entry[];
   @Field()
   hasMore: boolean;
+  @Field()
+  cursor: string;
 }
 
 @Resolver(Entry)
@@ -83,7 +85,7 @@ export class EntryResolver {
       parameters.push(new Date(parseInt(cursor)));
     }
 
-    const entries = await getConnection().query(
+    const entries: Entry[] = await getConnection().query(
       `
         select e.*
         from entry e
@@ -94,9 +96,12 @@ export class EntryResolver {
       parameters
     );
 
+    const newCursor = entries[realLimit-1] ? entries[realLimit-1].createdAt.getTime().toString() : "";
+
     return {
       entries: entries.slice(0, realLimit),
       hasMore: entries.length === realLimitPlusOne,
+      cursor: newCursor
     };
   }
 

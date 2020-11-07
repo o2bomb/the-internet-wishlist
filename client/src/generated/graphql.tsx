@@ -56,6 +56,7 @@ export type PaginatedEntries = {
   __typename?: 'PaginatedEntries';
   entries: Array<Entry>;
   hasMore: Scalars['Boolean'];
+  cursor: Scalars['String'];
 };
 
 export type Mutation = {
@@ -249,7 +250,7 @@ export type GetEntriesQuery = (
   { __typename?: 'Query' }
   & { entries: (
     { __typename?: 'PaginatedEntries' }
-    & Pick<PaginatedEntries, 'hasMore'>
+    & Pick<PaginatedEntries, 'hasMore' | 'cursor'>
     & { entries: Array<(
       { __typename?: 'Entry' }
       & RegularEntryFragment
@@ -551,6 +552,7 @@ export const GetEntriesDocument = gql`
       ...RegularEntry
     }
     hasMore
+    cursor
   }
 }
     ${RegularEntryFragmentDoc}`;
