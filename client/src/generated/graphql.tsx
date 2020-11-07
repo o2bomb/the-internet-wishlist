@@ -15,12 +15,19 @@ export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   entry?: Maybe<Entry>;
+  entries: PaginatedEntries;
   me?: Maybe<User>;
 };
 
 
 export type QueryEntryArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryEntriesArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 export type Entry = {
@@ -43,6 +50,12 @@ export type User = {
   email: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+};
+
+export type PaginatedEntries = {
+  __typename?: 'PaginatedEntries';
+  entries: Array<Entry>;
+  hasMore: Scalars['Boolean'];
 };
 
 export type Mutation = {
@@ -224,6 +237,24 @@ export type UpdateEntryMutation = (
     { __typename?: 'Entry' }
     & RegularEntryFragment
   )> }
+);
+
+export type GetEntriesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetEntriesQuery = (
+  { __typename?: 'Query' }
+  & { entries: (
+    { __typename?: 'PaginatedEntries' }
+    & Pick<PaginatedEntries, 'hasMore'>
+    & { entries: Array<(
+      { __typename?: 'Entry' }
+      & RegularEntryFragment
+    )> }
+  ) }
 );
 
 export type GetEntryQueryVariables = Exact<{
@@ -513,6 +544,43 @@ export function useUpdateEntryMutation(baseOptions?: Apollo.MutationHookOptions<
 export type UpdateEntryMutationHookResult = ReturnType<typeof useUpdateEntryMutation>;
 export type UpdateEntryMutationResult = Apollo.MutationResult<UpdateEntryMutation>;
 export type UpdateEntryMutationOptions = Apollo.BaseMutationOptions<UpdateEntryMutation, UpdateEntryMutationVariables>;
+export const GetEntriesDocument = gql`
+    query GetEntries($limit: Int!, $cursor: String) {
+  entries(limit: $limit, cursor: $cursor) {
+    entries {
+      ...RegularEntry
+    }
+    hasMore
+  }
+}
+    ${RegularEntryFragmentDoc}`;
+
+/**
+ * __useGetEntriesQuery__
+ *
+ * To run a query within a React component, call `useGetEntriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetEntriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetEntriesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useGetEntriesQuery(baseOptions: Apollo.QueryHookOptions<GetEntriesQuery, GetEntriesQueryVariables>) {
+        return Apollo.useQuery<GetEntriesQuery, GetEntriesQueryVariables>(GetEntriesDocument, baseOptions);
+      }
+export function useGetEntriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetEntriesQuery, GetEntriesQueryVariables>) {
+          return Apollo.useLazyQuery<GetEntriesQuery, GetEntriesQueryVariables>(GetEntriesDocument, baseOptions);
+        }
+export type GetEntriesQueryHookResult = ReturnType<typeof useGetEntriesQuery>;
+export type GetEntriesLazyQueryHookResult = ReturnType<typeof useGetEntriesLazyQuery>;
+export type GetEntriesQueryResult = Apollo.QueryResult<GetEntriesQuery, GetEntriesQueryVariables>;
 export const GetEntryDocument = gql`
     query GetEntry($id: Int!) {
   entry(id: $id) {

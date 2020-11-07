@@ -1,9 +1,11 @@
 import {
   Arg,
   Ctx,
+  Field,
   FieldResolver,
   Int,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
   Root,
@@ -15,6 +17,14 @@ import { MyContext } from "../types";
 import { Entry } from "../entities/Entry";
 import { User } from "../entities/User";
 import { Heart } from "../entities/Heart";
+
+@ObjectType()
+class PaginatedEntries {
+  @Field(() => [Entry])
+  entries: Entry[];
+  @Field()
+  hasMore: boolean;
+}
 
 @Resolver(Entry)
 export class EntryResolver {
@@ -57,6 +67,37 @@ export class EntryResolver {
   @Query(() => Entry, { nullable: true })
   entry(@Arg("id", () => Int) id: number): Promise<Entry | undefined> {
     return Entry.findOne(id);
+  }
+
+  @Query(() => PaginatedEntries)
+  async entries(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string,
+  ): Promise<PaginatedEntries> {
+    const realLimit = Math.min(30, limit); // limit to 30 max entries
+    const realLimitPlusOne = realLimit + 1;
+
+    const parameters: any[] = [realLimitPlusOne];
+
+    if (cursor) {
+      parameters.push(new Date(parseInt(cursor)));
+    }
+
+    const entries = await getConnection().query(
+      `
+        select e.*
+        from entry e
+        ${cursor ? `where e."createdAt" < $2` : ""}
+        order by e."createdAt" DESC
+        limit $1
+      `,
+      parameters
+    );
+
+    return {
+      entries: entries.slice(0, realLimit),
+      hasMore: entries.length === realLimitPlusOne,
+    };
   }
 
   @Mutation(() => Entry)
