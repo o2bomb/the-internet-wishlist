@@ -1,8 +1,9 @@
 import express from "express";
 import path from "path";
-import session from 'express-session';
+import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
+import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
@@ -37,6 +38,12 @@ const main = async () => {
   const RedisStore = connectRedis(session);
   const redis = new Redis();
   app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
+  app.use(
     session({
       name: COOKIE_NAME,
       store: new RedisStore({
@@ -60,7 +67,7 @@ const main = async () => {
       resolvers: [HelloResolver, EntryResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res, redis })
+    context: ({ req, res }) => ({ req, res, redis }),
   });
   apolloServer.applyMiddleware({ app });
 
