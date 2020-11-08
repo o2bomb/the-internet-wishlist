@@ -17,6 +17,16 @@ import { MyContext } from "../types";
 import { Entry } from "../entities/Entry";
 import { User } from "../entities/User";
 import { Heart } from "../entities/Heart";
+import { FieldError } from "./FieldError";
+import { validateCreateEntry } from "../utils/validateCreateEntry";
+
+@ObjectType()
+class EntryResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+  @Field(() => Entry, { nullable: true })
+  entry?: Entry;
+}
 
 @ObjectType()
 class PaginatedEntries {
@@ -31,8 +41,14 @@ class PaginatedEntries {
 @Resolver(Entry)
 export class EntryResolver {
   @FieldResolver(() => Boolean)
-  async isHearted(@Root() entry: Entry, @Ctx() { req, heartLoader }: MyContext) {
-    const heart = await heartLoader.load({ entryId: entry.id, userId: req.session.userId });
+  async isHearted(
+    @Root() entry: Entry,
+    @Ctx() { req, heartLoader }: MyContext
+  ) {
+    const heart = await heartLoader.load({
+      entryId: entry.id,
+      userId: req.session.userId,
+    });
     return !!heart;
   }
 
@@ -137,24 +153,39 @@ export class EntryResolver {
     };
   }
 
-  @Mutation(() => Entry)
+  @Mutation(() => EntryResponse)
   async createEntry(
     @Arg("title") title: string,
-    @Arg("text") text: string,
+    @Arg("text", { nullable: true }) text: string,
     @Ctx() { req }: MyContext
-  ): Promise<Entry> {
+  ): Promise<EntryResponse> {
+    const errors = validateCreateEntry(title, text);
+
+    if (errors) {
+      return {
+        errors,
+      };
+    }
+
     if (req.session.userId) {
-      return Entry.create({
+      const entry = await Entry.create({
         creatorId: req.session.userId,
         title,
         text,
       }).save();
+
+      return {
+        entry,
+      };
     }
 
-    return Entry.create({
+    const entry = await Entry.create({
       title,
       text,
     }).save();
+    return {
+      entry,
+    };
   }
 
   @Mutation(() => Entry, { nullable: true })
