@@ -15,14 +15,7 @@ import { MyContext } from "../types";
 import { validateRegister } from "../utils/validateRegister";
 import { User } from "../entities/User";
 import { COOKIE_NAME } from "../constants";
-
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-  @Field()
-  message: string;
-}
+import { FieldError } from "./FieldError";
 
 @ObjectType()
 class UserResponse {
