@@ -17,6 +17,7 @@ import { COOKIE_NAME, __prod__ } from "./constants";
 import { EntryTag } from "./entities/EntryTag";
 import { Tag } from "./entities/Tag";
 import { createUserLoader } from "./utils/createUserLoader";
+import { createHeartLoader } from "./utils/createHeartLoader";
 
 const main = async () => {
   const conn = await createConnection({
@@ -73,6 +74,7 @@ const main = async () => {
       res,
       redis,
       userLoader: createUserLoader(),
+      heartLoader: createHeartLoader(),
     }),
   });
   apolloServer.applyMiddleware({ app });

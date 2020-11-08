@@ -31,13 +31,8 @@ class PaginatedEntries {
 @Resolver(Entry)
 export class EntryResolver {
   @FieldResolver(() => Boolean)
-  async isHearted(@Root() entry: Entry, @Ctx() { req }: MyContext) {
-    const heart = await Heart.findOne({
-      where: {
-        entryId: entry.id,
-        userId: req.session.userId,
-      },
-    });
+  async isHearted(@Root() entry: Entry, @Ctx() { req, heartLoader }: MyContext) {
+    const heart = await heartLoader.load({ entryId: entry.id, userId: req.session.userId });
     return !!heart;
   }
 
