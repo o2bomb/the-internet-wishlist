@@ -18,9 +18,7 @@ export const EntryCard: React.FC<EntryCardProps> = ({
         <Heading mb={2} as="h3" size="md">
           {title}
         </Heading>
-        {isHearted ? null : (
-          <IconButton aria-label="Heart entry" icon="heart" isRound />
-        )}
+        <IconButton variantColor={isHearted ? "red" : undefined} aria-label="Heart entry" icon="heart" isRound />
       </Flex>
       {text && <Box mb={2}>{text}</Box>}
       <Stack flexWrap="wrap" direction="row">

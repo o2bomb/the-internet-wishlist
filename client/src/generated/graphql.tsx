@@ -63,7 +63,7 @@ export type PaginatedEntries = {
 export type Mutation = {
   __typename?: 'Mutation';
   heartEntry: Scalars['Boolean'];
-  createEntry: Entry;
+  createEntry: EntryResponse;
   updateEntry?: Maybe<Entry>;
   deleteEntry: Scalars['Boolean'];
   register: UserResponse;
@@ -79,7 +79,7 @@ export type MutationHeartEntryArgs = {
 
 
 export type MutationCreateEntryArgs = {
-  text: Scalars['String'];
+  text?: Maybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
@@ -106,16 +106,22 @@ export type MutationLoginArgs = {
   usernameOrEmail: Scalars['String'];
 };
 
-export type UserResponse = {
-  __typename?: 'UserResponse';
+export type EntryResponse = {
+  __typename?: 'EntryResponse';
   errors?: Maybe<Array<FieldError>>;
-  user?: Maybe<User>;
+  entry?: Maybe<Entry>;
 };
 
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
   message: Scalars['String'];
+};
+
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<User>;
 };
 
 export type UsernamePasswordInput = {
@@ -156,15 +162,21 @@ export type RegularUserResponseFragment = (
 
 export type CreateEntryMutationVariables = Exact<{
   title: Scalars['String'];
-  text: Scalars['String'];
+  text?: Maybe<Scalars['String']>;
 }>;
 
 
 export type CreateEntryMutation = (
   { __typename?: 'Mutation' }
   & { createEntry: (
-    { __typename?: 'Entry' }
-    & RegularEntryFragment
+    { __typename?: 'EntryResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & RegularErrorFragment
+    )>>, entry?: Maybe<(
+      { __typename?: 'Entry' }
+      & RegularEntryFragment
+    )> }
   ) }
 );
 
@@ -324,12 +336,18 @@ export const RegularUserResponseFragmentDoc = gql`
     ${RegularErrorFragmentDoc}
 ${RegularUserFragmentDoc}`;
 export const CreateEntryDocument = gql`
-    mutation CreateEntry($title: String!, $text: String!) {
+    mutation CreateEntry($title: String!, $text: String) {
   createEntry(title: $title, text: $text) {
-    ...RegularEntry
+    errors {
+      ...RegularError
+    }
+    entry {
+      ...RegularEntry
+    }
   }
 }
-    ${RegularEntryFragmentDoc}`;
+    ${RegularErrorFragmentDoc}
+${RegularEntryFragmentDoc}`;
 export type CreateEntryMutationFn = Apollo.MutationFunction<CreateEntryMutation, CreateEntryMutationVariables>;
 
 /**
