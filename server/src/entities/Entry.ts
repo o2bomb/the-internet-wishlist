@@ -42,8 +42,9 @@ export class Entry extends BaseEntity {
   @Column({ nullable: true })
   text: string;
 
-  @Field(() => Int)
-  points: number;
+  @Field()
+  @Column({ type: "int", default: 0 })
+  points!: number;
 
   @Field(() => String)
   @CreateDateColumn()

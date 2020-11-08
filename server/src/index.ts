@@ -16,6 +16,7 @@ import { UserResolver } from "./resolvers/user";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import { EntryTag } from "./entities/EntryTag";
 import { Tag } from "./entities/Tag";
+import { createUserLoader } from "./utils/createUserLoader";
 
 const main = async () => {
   const conn = await createConnection({
@@ -67,7 +68,12 @@ const main = async () => {
       resolvers: [HelloResolver, EntryResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }) => ({ req, res, redis }),
+    context: ({ req, res }) => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+    }),
   });
   apolloServer.applyMiddleware({ app });
 
