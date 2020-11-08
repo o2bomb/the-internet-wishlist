@@ -2,9 +2,7 @@ import { Box, Button, Stack } from "@chakra-ui/core";
 import React from "react";
 import { EntryCard } from "../components/EntryCard";
 import { Layout } from "../components/Layout";
-import {
-  useGetEntriesQuery
-} from "../generated/graphql";
+import { useGetEntriesQuery } from "../generated/graphql";
 
 const Index = () => {
   const { loading, error, data, fetchMore } = useGetEntriesQuery({
@@ -31,44 +29,44 @@ const Index = () => {
             <EntryCard {...e} />
           </Box>
         ))}
-      </Stack>
-      <Button
-        isLoading={loading}
-        onClick={() => {
-          if (data?.entries.hasMore) {
-            fetchMore({
-              variables: {
-                cursor: data?.entries.cursor,
-              },
-              // OLD WAY Of UPDATING QUERY IN CACHE
-              // updateQuery: (
-              //   previousValue,
-              //   { fetchMoreResult }
-              // ): GetEntriesQuery => {
-              //   if (!fetchMoreResult) {
-              //     return previousValue as GetEntriesQuery;
-              //   }
+        <Button
+          isLoading={loading}
+          onClick={() => {
+            if (data?.entries.hasMore) {
+              fetchMore({
+                variables: {
+                  cursor: data?.entries.cursor,
+                },
+                // OLD WAY Of UPDATING QUERY IN CACHE
+                // updateQuery: (
+                //   previousValue,
+                //   { fetchMoreResult }
+                // ): GetEntriesQuery => {
+                //   if (!fetchMoreResult) {
+                //     return previousValue as GetEntriesQuery;
+                //   }
 
-              //   return {
-              //     __typename: "Query",
-              //     entries: {
-              //       __typename: "PaginatedEntries",
-              //       cursor: (fetchMoreResult as GetEntriesQuery).entries.cursor,
-              //       hasMore: (fetchMoreResult as GetEntriesQuery).entries
-              //         .hasMore,
-              //       entries: [
-              //         ...previousValue.entries.entries,
-              //         ...(fetchMoreResult as GetEntriesQuery).entries.entries,
-              //       ],
-              //     },
-              //   };
-              // },
-            });
-          }
-        }}
-      >
-        Load more
-      </Button>
+                //   return {
+                //     __typename: "Query",
+                //     entries: {
+                //       __typename: "PaginatedEntries",
+                //       cursor: (fetchMoreResult as GetEntriesQuery).entries.cursor,
+                //       hasMore: (fetchMoreResult as GetEntriesQuery).entries
+                //         .hasMore,
+                //       entries: [
+                //         ...previousValue.entries.entries,
+                //         ...(fetchMoreResult as GetEntriesQuery).entries.entries,
+                //       ],
+                //     },
+                //   };
+                // },
+              });
+            }
+          }}
+        >
+          Load more
+        </Button>
+      </Stack>
     </Layout>
   );
 };
