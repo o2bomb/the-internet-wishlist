@@ -37,9 +37,10 @@ export type Entry = {
   creator?: Maybe<User>;
   title: Scalars['String'];
   text?: Maybe<Scalars['String']>;
-  points: Scalars['Int'];
+  points: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  isHearted: Scalars['Boolean'];
 };
 
 export type User = {
@@ -125,7 +126,7 @@ export type UsernamePasswordInput = {
 
 export type RegularEntryFragment = (
   { __typename?: 'Entry' }
-  & Pick<Entry, 'id' | 'creatorId' | 'title' | 'text' | 'points' | 'createdAt' | 'updatedAt'>
+  & Pick<Entry, 'id' | 'creatorId' | 'title' | 'text' | 'points' | 'isHearted' | 'createdAt' | 'updatedAt'>
   & { creator?: Maybe<(
     { __typename?: 'User' }
     & RegularUserFragment
@@ -300,6 +301,7 @@ export const RegularEntryFragmentDoc = gql`
   title
   text
   points
+  isHearted
   createdAt
   updatedAt
 }

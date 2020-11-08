@@ -1,11 +1,4 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  Stack,
-  Tag,
-} from "@chakra-ui/core";
+import { Box, Flex, Heading, IconButton, Stack, Tag } from "@chakra-ui/core";
 import React from "react";
 
 interface EntryCardProps {
@@ -25,11 +18,9 @@ export const EntryCard: React.FC<EntryCardProps> = ({
         <Heading mb={2} as="h3" size="md">
           {title}
         </Heading>
-        <IconButton
-          aria-label="Heart entry"
-          icon="heart"
-          isRound
-        />
+        {isHearted ? null : (
+          <IconButton aria-label="Heart entry" icon="heart" isRound />
+        )}
       </Flex>
       {text && <Box mb={2}>{text}</Box>}
       <Stack flexWrap="wrap" direction="row">
