@@ -30,6 +30,17 @@ class PaginatedEntries {
 
 @Resolver(Entry)
 export class EntryResolver {
+  @FieldResolver(() => Boolean)
+  async isHearted(@Root() entry: Entry, @Ctx() { req }: MyContext) {
+    const heart = await Heart.findOne({
+      where: {
+        entryId: entry.id,
+        userId: req.session.userId,
+      },
+    });
+    return !!heart;
+  }
+
   @FieldResolver(() => User, { nullable: true })
   creator(@Root() entry: Entry, @Ctx() { userLoader }: MyContext) {
     return entry.creatorId ? userLoader.load(entry.creatorId) : null;
@@ -55,7 +66,7 @@ export class EntryResolver {
             .from(Heart)
             .where('"entryId" = :entryId', { entryId: id })
             .execute();
-  
+
           // Update entry's points
           await em.query(`
             update entry
@@ -77,7 +88,7 @@ export class EntryResolver {
               userId,
             })
             .execute();
-  
+
           // Update entry's points
           await em.query(`
             update entry
