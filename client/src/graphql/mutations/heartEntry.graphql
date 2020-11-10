@@ -1,3 +1,7 @@
 mutation HeartEntry($id: Int!, $deleteHeart: Boolean!) {
-    heartEntry(id: $id, deleteHeart: $deleteHeart)
+  heartEntry(id: $id, deleteHeart: $deleteHeart) {
+    id
+    points
+    isHearted
+  }
 }

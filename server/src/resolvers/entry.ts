@@ -64,15 +64,16 @@ export class EntryResolver {
     return user;
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Entry, { nullable: true })
   @UseMiddleware(isAuth)
   async heartEntry(
     @Arg("id", () => Int) id: number,
     @Arg("deleteHeart", () => Boolean) deleteHeart: boolean,
     @Ctx() { req }: MyContext
-  ) {
+  ): Promise<Entry | null> {
     const { userId } = req.session;
     const heart = await Heart.findOne({ where: { entryId: id, userId } });
+    let entry = null;
 
     if (deleteHeart) {
       if (heart) {
@@ -91,6 +92,9 @@ export class EntryResolver {
             set points = points - 1
             where id = ${id}
           `);
+
+          // Get the updated entry
+          entry = await em.getRepository(Entry).findOne(id);
         });
       }
     } else {
@@ -113,10 +117,13 @@ export class EntryResolver {
             set points = points + 1
             where id = ${id}
           `);
+
+          // Get the updated entry
+          entry = await em.getRepository(Entry).findOne(id);
         });
       }
     }
-    return true;
+    return entry;
   }
 
   @Query(() => Entry, { nullable: true })

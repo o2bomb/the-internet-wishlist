@@ -26,7 +26,7 @@ const Index = () => {
       <Stack spacing={4}>
         {data?.entries.entries.map((e, index) => (
           <Box key={index}>
-            <EntryCard {...e} />
+            <EntryCard entry={e} />
           </Box>
         ))}
         <Button

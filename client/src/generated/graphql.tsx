@@ -62,7 +62,7 @@ export type PaginatedEntries = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  heartEntry: Scalars['Boolean'];
+  heartEntry?: Maybe<Entry>;
   createEntry: EntryResponse;
   updateEntry?: Maybe<Entry>;
   deleteEntry: Scalars['Boolean'];
@@ -198,7 +198,10 @@ export type HeartEntryMutationVariables = Exact<{
 
 export type HeartEntryMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'heartEntry'>
+  & { heartEntry?: Maybe<(
+    { __typename?: 'Entry' }
+    & Pick<Entry, 'id' | 'points' | 'isHearted'>
+  )> }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -406,7 +409,11 @@ export type DeleteEntryMutationResult = Apollo.MutationResult<DeleteEntryMutatio
 export type DeleteEntryMutationOptions = Apollo.BaseMutationOptions<DeleteEntryMutation, DeleteEntryMutationVariables>;
 export const HeartEntryDocument = gql`
     mutation HeartEntry($id: Int!, $deleteHeart: Boolean!) {
-  heartEntry(id: $id, deleteHeart: $deleteHeart)
+  heartEntry(id: $id, deleteHeart: $deleteHeart) {
+    id
+    points
+    isHearted
+  }
 }
     `;
 export type HeartEntryMutationFn = Apollo.MutationFunction<HeartEntryMutation, HeartEntryMutationVariables>;
