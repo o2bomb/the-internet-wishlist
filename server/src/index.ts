@@ -36,15 +36,14 @@ const main = async () => {
   // await User.delete({});
 
   const app = express();
-
+  
+  const corsOptions = {
+    origin: "http://localhost:3000",
+    credentials: true,
+  };
+  // app.use(cors(corsOptions));
   const RedisStore = connectRedis(session);
   const redis = new Redis();
-  app.use(
-    cors({
-      origin: "http://localhost:3000",
-      credentials: true,
-    })
-  );
   app.use(
     session({
       name: COOKIE_NAME,
@@ -77,7 +76,7 @@ const main = async () => {
       heartLoader: createHeartLoader(),
     }),
   });
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: corsOptions });
 
   app.listen(4000, () => {
     console.log("Express server started on localhost:4000");
