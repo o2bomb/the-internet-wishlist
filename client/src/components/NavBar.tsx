@@ -21,6 +21,7 @@ import {
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import { useApolloClient } from "@apollo/client";
+import { DarkModeSwitch } from "./DarkModeSwitch";
 
 interface NavBarProps {}
 
@@ -84,7 +85,10 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
         <Input type="search" placeholder="Search for an entry..."></Input>
       </InputGroup>
       <Box flex={1} mr={4} />
-      <NextLink href="/create-entry">
+      <Box mr={4}>
+        <DarkModeSwitch />
+      </Box>
+      <NextLink href="/create-entry" passHref>
         <Button as={Link} mr={4}>
           Create a post
         </Button>
