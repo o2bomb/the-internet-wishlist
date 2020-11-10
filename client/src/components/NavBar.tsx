@@ -25,7 +25,6 @@ import { useApolloClient } from "@apollo/client";
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const router = useRouter();
   const apolloClient = useApolloClient();
   const [logout, { loading: logoutLoading }] = useLogoutMutation();
   const { loading, data } = useMeQuery({
@@ -37,9 +36,14 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
   } else if (!data?.me) {
     // User is not logged in
     body = (
-      <NextLink href="/login">
-        <Button as={Link}>Login</Button>
-      </NextLink>
+      <>
+        <NextLink href="/login">
+          <Link mr={4}>Login</Link>
+        </NextLink>
+        <NextLink href="/register">
+          <Link>Register</Link>
+        </NextLink>
+      </>
     );
   } else {
     body = (
@@ -55,10 +59,12 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
             <MenuList>
               <MenuItem>View profile</MenuItem>
               <MenuDivider />
-              <MenuItem onClick={async () => {
-                await logout();
-                await apolloClient.resetStore(); // reset cache
-              }}>
+              <MenuItem
+                onClick={async () => {
+                  await logout();
+                  await apolloClient.resetStore(); // reset cache
+                }}
+              >
                 Logout
               </MenuItem>
             </MenuList>
