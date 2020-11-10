@@ -1,16 +1,15 @@
-import React from "react";
-import { useRouter } from "next/router";
+import { gql } from "@apollo/client";
 import { Button } from "@chakra-ui/core";
 import { Form, Formik } from "formik";
-import { Layout } from "../components/Layout";
+import { useRouter } from "next/router";
+import React from "react";
 import { InputField } from "../components/InputField";
+import { Layout } from "../components/Layout";
 import {
-  Entry,
   PaginatedEntries,
-  useCreateEntryMutation,
+  useCreateEntryMutation
 } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
-import { gql } from "@apollo/client";
 
 interface CreateEntryProps {}
 
@@ -19,10 +18,12 @@ const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
   const [createEntry] = useCreateEntryMutation({
     update: (cache, { data }) => {
       const newEntry = data?.createEntry.entry;
-      if (data?.createEntry.entry) {
+      if (newEntry) {
         cache.modify({
           fields: {
-            entries: (existing: PaginatedEntries | undefined): PaginatedEntries => {
+            entries: (
+              existing: PaginatedEntries | undefined
+            ): PaginatedEntries => {
               // Update the cache when a new entry is created
               // https://www.apollographql.com/docs/react/data/mutations/#making-all-other-cache-updates
               const newEntryRef = cache.writeFragment({
@@ -39,8 +40,8 @@ const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
               return {
                 cursor,
                 hasMore,
-                entries: [newEntryRef as any, ...(existing?.entries || [])]
-              }
+                entries: [newEntryRef as any, ...(existing?.entries || [])],
+              };
             },
           },
         });
@@ -74,7 +75,7 @@ const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
         {({ isSubmitting }) => (
           <Form>
             <InputField name="title" label="Title" placeholder="I wish..." />
-            <InputField name="text" label="Description" />
+            <InputField name="text" label="Description" textArea={true} />
             <Button mt={4} isLoading={isSubmitting} type="submit">
               Create entry
             </Button>
