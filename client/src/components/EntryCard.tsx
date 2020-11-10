@@ -25,7 +25,7 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
     <Box padding={4} maxW="20rem" borderWidth="1px" rounded=".25rem">
       <Stack spacing={1}>
         <Flex direction="row" justifyContent="space-between">
-          <Heading as="h3" size="md">
+          <Heading as="h2" size="lg">
             {title}
           </Heading>
           <IconButton
