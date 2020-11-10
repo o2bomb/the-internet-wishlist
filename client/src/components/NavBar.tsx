@@ -1,16 +1,10 @@
-import React from "react";
-import NextLink from "next/link";
-import { useRouter } from "next/router";
+import { useApolloClient } from "@apollo/client";
 import {
   Box,
   Button,
   Flex,
   Heading,
-  Icon,
   IconButton,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Link,
   Menu,
   MenuButton,
@@ -18,21 +12,25 @@ import {
   MenuItem,
   MenuList,
 } from "@chakra-ui/core";
+import NextLink from "next/link";
+import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
-import { useApolloClient } from "@apollo/client";
+import { useViewport } from "../utils/ViewportProvider";
 import { DarkModeSwitch } from "./DarkModeSwitch";
+import { SearchInput } from "./SearchInput";
 
 interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
+  const viewportValues = useViewport();
   const apolloClient = useApolloClient();
   const [logout] = useLogoutMutation();
   const { loading, data } = useMeQuery({
     skip: isServer(), // do not run this query on the server
   });
-  let body = null;
 
+  let body = null;
   if (loading) {
   } else if (!data?.me) {
     // User is not logged in
@@ -84,18 +82,19 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           </Heading>
         </Link>
       </NextLink>
-      <InputGroup>
-        <InputLeftElement children={<Icon name="search" />} />
-        <Input type="search" placeholder="Search for an entry..."></Input>
-      </InputGroup>
+      <SearchInput />
       <Box flex={1} mr={4} />
       <Box mr={4}>
         <DarkModeSwitch />
       </Box>
       <NextLink href="/create-entry" passHref>
-        <Button as={Link} mr={4}>
-          Create a post
-        </Button>
+        {viewportValues.width < 620 ? (
+          <IconButton icon="add" mr={4} aria-label="Create post" />
+        ) : (
+          <Button as={Link} mr={4}>
+            Create a post
+          </Button>
+        )}
       </NextLink>
       {body}
     </Flex>
