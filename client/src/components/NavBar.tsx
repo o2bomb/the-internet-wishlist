@@ -27,7 +27,7 @@ interface NavBarProps {}
 
 export const NavBar: React.FC<NavBarProps> = ({}) => {
   const apolloClient = useApolloClient();
-  const [logout, { loading: logoutLoading }] = useLogoutMutation();
+  const [logout] = useLogoutMutation();
   const { loading, data } = useMeQuery({
     skip: isServer(), // do not run this query on the server
   });
@@ -38,10 +38,10 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
     // User is not logged in
     body = (
       <>
-        <NextLink href="/login">
+        <NextLink href="/login" passHref>
           <Link mr={4}>Login</Link>
         </NextLink>
-        <NextLink href="/register">
+        <NextLink href="/register" passHref>
           <Link>Register</Link>
         </NextLink>
       </>

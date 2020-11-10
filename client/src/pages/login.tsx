@@ -63,7 +63,7 @@ const Login: React.FC<{}> = ({}) => {
               <Button isLoading={isSubmitting} type="submit">
                 Login
               </Button>
-              <NextLink href="/register">
+              <NextLink href="/register" passHref>
                 <Link>Create a new account</Link>
               </NextLink>
             </Flex>
