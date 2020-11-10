@@ -45,16 +45,23 @@ export class EntryResolver {
     @Root() entry: Entry,
     @Ctx() { req, heartLoader }: MyContext
   ) {
-    const heart = await heartLoader.load({
-      entryId: entry.id,
-      userId: req.session.userId,
-    });
+    let heart = undefined;
+    if (req.session.userId) {
+      heart = await heartLoader.load({
+        entryId: entry.id,
+        userId: req.session.userId,
+      });
+    }
     return !!heart;
   }
 
   @FieldResolver(() => User, { nullable: true })
-  creator(@Root() entry: Entry, @Ctx() { userLoader }: MyContext) {
-    return entry.creatorId ? userLoader.load(entry.creatorId) : null;
+  async creator(@Root() entry: Entry, @Ctx() { userLoader }: MyContext) {
+    let user = null;
+    if (entry.creatorId) {
+      user = await userLoader.load(entry.creatorId)
+    }
+    return user;
   }
 
   @Mutation(() => Boolean)
