@@ -6,13 +6,13 @@ import { Heart } from "../entities/Heart"
  * into a single request
  */
 export const createHeartLoader = () => {
-  return new DataLoader<{ entryId: number, userId: number }, Heart | null>(async (keys) => {
+  return new DataLoader<{ entryId: number, creatorId: number }, Heart | null>(async (keys) => {
     const hearts = await Heart.findByIds(keys as any);
     const heartIdToHeart: Record<string, Heart> = {};
     hearts.forEach((h) => {
-      heartIdToHeart[`${h.entryId} | ${h.userId}`] = h;
+      heartIdToHeart[`${h.entryId} | ${h.creatorId}`] = h;
     })
 
-    return keys.map((key) => heartIdToHeart[`${key.entryId} | ${key.userId}`])
+    return keys.map((key) => heartIdToHeart[`${key.entryId} | ${key.creatorId}`])
   })
 }

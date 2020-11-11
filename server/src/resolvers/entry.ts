@@ -64,7 +64,7 @@ export class EntryResolver {
     if (req.session.userId) {
       heart = await heartLoader.load({
         entryId: entry.id,
-        userId: req.session.userId,
+        creatorId: req.session.userId,
       });
     }
     return !!heart;
@@ -150,7 +150,7 @@ export class EntryResolver {
     @Ctx() { req }: MyContext
   ): Promise<Entry | null> {
     const { userId } = req.session;
-    const heart = await Heart.findOne({ where: { entryId: id, userId } });
+    const heart = await Heart.findOne({ where: { entryId: id, creatorId: userId } });
     let entry = null;
 
     if (deleteHeart) {
