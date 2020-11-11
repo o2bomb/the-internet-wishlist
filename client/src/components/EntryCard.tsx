@@ -11,6 +11,7 @@ import React from "react";
 import {
   RegularEntryFragment,
   useHeartEntryMutation,
+  useMeQuery,
 } from "../generated/graphql";
 
 interface EntryCardProps {
@@ -18,8 +19,9 @@ interface EntryCardProps {
 }
 
 export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
-  const { id, title, isHearted, text, points, creator } = entry;
+  const { id, title, isHearted, text, points, creator, tags } = entry;
   const toast = useToast();
+  const { data } = useMeQuery();
   const [heartEntry] = useHeartEntryMutation();
   return (
     <Box padding={4} maxW="20rem" borderWidth="1px" rounded=".25rem">
@@ -28,30 +30,32 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
           <Heading as="h2" size="lg">
             {title}
           </Heading>
-          <IconButton
-            onClick={async () => {
-              await heartEntry({
-                variables: {
-                  id,
-                  deleteHeart: isHearted,
-                },
-              }).catch((e) => {
-                // error occurred, notify user
-                console.log(e);
+          {data?.me?.id === creator?.id ? null : (
+            <IconButton
+              onClick={async () => {
+                await heartEntry({
+                  variables: {
+                    id,
+                    deleteHeart: isHearted,
+                  },
+                }).catch((e) => {
+                  // error occurred, notify user
+                  console.log(e);
 
-                toast({
-                  title: "You must be logged in to like an entry!",
-                  status: "error",
-                  duration: 1000,
-                  isClosable: true,
+                  toast({
+                    title: "You must be logged in to like an entry!",
+                    status: "error",
+                    duration: 1000,
+                    isClosable: true,
+                  });
                 });
-              });
-            }}
-            variantColor={isHearted ? "red" : undefined}
-            aria-label="Heart entry"
-            icon="heart"
-            isRound
-          />
+              }}
+              variantColor={isHearted ? "red" : undefined}
+              aria-label="Heart entry"
+              icon="heart"
+              isRound
+            />
+          )}
         </Flex>
         {text && <Box>{text}</Box>}
         <Box color="gray.500" letterSpacing="wide" fontSize="sm">
@@ -59,10 +63,8 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
           {creator ? creator.displayName : "Anonymous"}
         </Box>
         <Box></Box>
-        <Stack flexWrap="wrap" direction="row">
-          <Tag>idea</Tag>
-          <Tag>animals</Tag>
-          <Tag>...</Tag>
+        <Stack flexWrap="wrap" direction="row" mt={-2}>
+          {tags ? tags.map((t) => <Tag mt={2}>{t.displayName}</Tag>) : null}
         </Stack>
       </Stack>
     </Box>
