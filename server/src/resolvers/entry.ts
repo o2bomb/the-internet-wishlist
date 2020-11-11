@@ -284,14 +284,13 @@ export class EntryResolver {
   @UseMiddleware(isAuth)
   async updateEntry(
     @Arg("id", () => Int) id: number,
-    @Arg("title") title: string,
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
   ): Promise<Entry | null> {
     const result = await getConnection()
       .createQueryBuilder()
       .update(Entry)
-      .set({ title, text })
+      .set({ text })
       .where('id = :id and "creatorId" = :creatorId', {
         id,
         creatorId: req.session.userId,
