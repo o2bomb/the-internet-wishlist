@@ -3,7 +3,6 @@ import path from "path";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
-import cors from "cors";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
