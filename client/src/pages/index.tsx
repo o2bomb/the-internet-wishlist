@@ -22,7 +22,7 @@ const Index = () => {
   }
 
   return (
-    <Layout>
+    <Layout navigation>
       <Stack spacing={4}>
         {data?.entries.entries.map((e, index) => (
           <Box key={index}>

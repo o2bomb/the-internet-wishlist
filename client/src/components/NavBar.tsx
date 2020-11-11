@@ -20,9 +20,11 @@ import { useViewport } from "../utils/ViewportProvider";
 import { DarkModeSwitch } from "./DarkModeSwitch";
 import { SearchInput } from "./SearchInput";
 
-interface NavBarProps {}
+interface NavBarProps {
+  navigation?: boolean;
+}
 
-export const NavBar: React.FC<NavBarProps> = ({}) => {
+export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
   const viewportValues = useViewport();
   const apolloClient = useApolloClient();
   const [logout] = useLogoutMutation();
@@ -82,21 +84,25 @@ export const NavBar: React.FC<NavBarProps> = ({}) => {
           </Heading>
         </Link>
       </NextLink>
-      <SearchInput />
+      {navigation ? <SearchInput /> : null}
       <Box flex={1} mr={4} />
       <Box mr={4}>
         <DarkModeSwitch />
       </Box>
-      <NextLink href="/create-entry" passHref>
-        {viewportValues.width < 620 ? (
-          <IconButton icon="add" mr={4} aria-label="Create post" />
-        ) : (
-          <Button as={Link} mr={4}>
-            Create a post
-          </Button>
-        )}
-      </NextLink>
-      {body}
+      {navigation ? (
+        <>
+          <NextLink href="/create-entry" passHref>
+            {viewportValues.width < 620 ? (
+              <IconButton icon="add" mr={4} aria-label="Create post" />
+            ) : (
+              <Button as={Link} mr={4}>
+                Create a post
+              </Button>
+            )}
+          </NextLink>
+          {body}
+        </>
+      ) : null}
     </Flex>
   );
 };

@@ -5,10 +5,11 @@ import { NavBar } from "./NavBar";
 type LayoutVariant = "small" | "regular" | "large";
 
 interface LayoutProps {
+  navigation?: boolean;
   variant?: LayoutVariant;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, variant, navigation }) => {
   let maxWidth;
   switch(variant) {
     case "small":
@@ -23,7 +24,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, variant }) => {
 
   return (
     <Box>
-      <NavBar />
+      <NavBar navigation={navigation} />
       <Box marginX="auto" paddingX={4} maxW={maxWidth}>{children}</Box>
     </Box>
   );
