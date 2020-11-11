@@ -18,6 +18,7 @@ import { MyContext } from "../types";
 import { Entry } from "../entities/Entry";
 import { User } from "../entities/User";
 import { FieldError } from "./FieldError";
+import { validateCreateTag } from "../utils/validateCreateTag";
 
 @ObjectType()
 class TagResponse {
@@ -54,14 +55,10 @@ export class TagResolver {
     @Arg("name") name: string,
     @Ctx() { req }: MyContext
   ): Promise<TagResponse> {
-    if (name.length === 0) {
+    const errors = validateCreateTag(name);
+    if (errors) {
       return {
-        errors: [
-          {
-            field: "name",
-            message: "Tag name must contain at least 1 character",
-          },
-        ],
+        errors
       }
     }
 
