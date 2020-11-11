@@ -1,0 +1,4 @@
+fragment PartialTag on Tag {
+  id
+  displayName
+}

@@ -1,0 +1,8 @@
+mutation TagEntry($id: Int!, $tagIds: [Int!]!) {
+  tagEntry(id: $id, tagIds: $tagIds) {
+    id
+    tags {
+      ...PartialTag
+    }
+  }
+}

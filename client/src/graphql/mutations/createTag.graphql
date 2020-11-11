@@ -1,0 +1,10 @@
+mutation CreateTag($name: String!) {
+  createTag(name: $name) {
+    errors {
+      ...RegularError
+    }
+    tag {
+      ...RegularTag
+    }
+  }
+}

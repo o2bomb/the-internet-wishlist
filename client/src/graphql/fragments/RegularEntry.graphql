@@ -4,6 +4,9 @@ fragment RegularEntry on Entry {
   creator {
     ...RegularUser
   }
+  tags {
+    ...PartialTag
+  }
   title
   text
   points

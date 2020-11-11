@@ -1,0 +1,9 @@
+fragment RegularTag on Tag {
+  id
+  creator {
+    ...RegularUser
+  }
+  displayName
+  name
+  createdAt
+}

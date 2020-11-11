@@ -1,9 +1,9 @@
 query GetEntries($limit: Int!, $cursor: String) {
-    entries(limit: $limit, cursor: $cursor) {
-        entries {
-            ...RegularEntry
-        }
-        hasMore
-        cursor
+  entries(limit: $limit, cursor: $cursor) {
+    entries {
+      ...RegularEntry
     }
+    hasMore
+    cursor
+  }
 }

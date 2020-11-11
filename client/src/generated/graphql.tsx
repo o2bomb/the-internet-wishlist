@@ -17,6 +17,8 @@ export type Query = {
   entry?: Maybe<Entry>;
   entries: PaginatedEntries;
   me?: Maybe<User>;
+  tag?: Maybe<Tag>;
+  tags: Array<Tag>;
 };
 
 
@@ -30,6 +32,11 @@ export type QueryEntriesArgs = {
   limit: Scalars['Int'];
 };
 
+
+export type QueryTagArgs = {
+  id: Scalars['Int'];
+};
+
 export type Entry = {
   __typename?: 'Entry';
   id: Scalars['Float'];
@@ -40,6 +47,7 @@ export type Entry = {
   points: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  tags: Array<Tag>;
   isHearted: Scalars['Boolean'];
 };
 
@@ -53,6 +61,15 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
+export type Tag = {
+  __typename?: 'Tag';
+  id: Scalars['Float'];
+  creator?: Maybe<User>;
+  displayName: Scalars['String'];
+  name: Scalars['String'];
+  createdAt: Scalars['String'];
+};
+
 export type PaginatedEntries = {
   __typename?: 'PaginatedEntries';
   entries: Array<Entry>;
@@ -62,6 +79,7 @@ export type PaginatedEntries = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  tagEntry?: Maybe<Entry>;
   heartEntry?: Maybe<Entry>;
   createEntry: EntryResponse;
   updateEntry?: Maybe<Entry>;
@@ -69,6 +87,13 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+  createTag: TagResponse;
+};
+
+
+export type MutationTagEntryArgs = {
+  tagIds: Array<Scalars['Int']>;
+  id: Scalars['Int'];
 };
 
 
@@ -106,6 +131,11 @@ export type MutationLoginArgs = {
   usernameOrEmail: Scalars['String'];
 };
 
+
+export type MutationCreateTagArgs = {
+  name: Scalars['String'];
+};
+
 export type EntryResponse = {
   __typename?: 'EntryResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -130,18 +160,41 @@ export type UsernamePasswordInput = {
   password: Scalars['String'];
 };
 
+export type TagResponse = {
+  __typename?: 'TagResponse';
+  errors?: Maybe<Array<FieldError>>;
+  tag?: Maybe<Tag>;
+};
+
+export type PartialTagFragment = (
+  { __typename?: 'Tag' }
+  & Pick<Tag, 'id' | 'displayName'>
+);
+
 export type RegularEntryFragment = (
   { __typename?: 'Entry' }
   & Pick<Entry, 'id' | 'creatorId' | 'title' | 'text' | 'points' | 'isHearted' | 'createdAt' | 'updatedAt'>
   & { creator?: Maybe<(
     { __typename?: 'User' }
     & RegularUserFragment
+  )>, tags: Array<(
+    { __typename?: 'Tag' }
+    & PartialTagFragment
   )> }
 );
 
 export type RegularErrorFragment = (
   { __typename?: 'FieldError' }
   & Pick<FieldError, 'field' | 'message'>
+);
+
+export type RegularTagFragment = (
+  { __typename?: 'Tag' }
+  & Pick<Tag, 'id' | 'displayName' | 'name' | 'createdAt'>
+  & { creator?: Maybe<(
+    { __typename?: 'User' }
+    & RegularUserFragment
+  )> }
 );
 
 export type RegularUserFragment = (
@@ -176,6 +229,25 @@ export type CreateEntryMutation = (
     )>>, entry?: Maybe<(
       { __typename?: 'Entry' }
       & RegularEntryFragment
+    )> }
+  ) }
+);
+
+export type CreateTagMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type CreateTagMutation = (
+  { __typename?: 'Mutation' }
+  & { createTag: (
+    { __typename?: 'TagResponse' }
+    & { errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & RegularErrorFragment
+    )>>, tag?: Maybe<(
+      { __typename?: 'Tag' }
+      & RegularTagFragment
     )> }
   ) }
 );
@@ -241,6 +313,24 @@ export type RegisterMutation = (
   ) }
 );
 
+export type TagEntryMutationVariables = Exact<{
+  id: Scalars['Int'];
+  tagIds: Array<Scalars['Int']>;
+}>;
+
+
+export type TagEntryMutation = (
+  { __typename?: 'Mutation' }
+  & { tagEntry?: Maybe<(
+    { __typename?: 'Entry' }
+    & Pick<Entry, 'id'>
+    & { tags: Array<(
+      { __typename?: 'Tag' }
+      & PartialTagFragment
+    )> }
+  )> }
+);
+
 export type UpdateEntryMutationVariables = Exact<{
   id: Scalars['Int'];
   title: Scalars['String'];
@@ -287,6 +377,30 @@ export type GetEntryQuery = (
   )> }
 );
 
+export type GetTagQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type GetTagQuery = (
+  { __typename?: 'Query' }
+  & { tag?: Maybe<(
+    { __typename?: 'Tag' }
+    & RegularTagFragment
+  )> }
+);
+
+export type GetTagsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTagsQuery = (
+  { __typename?: 'Query' }
+  & { tags: Array<(
+    { __typename?: 'Tag' }
+    & PartialTagFragment
+  )> }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -306,6 +420,12 @@ export const RegularUserFragmentDoc = gql`
   email
 }
     `;
+export const PartialTagFragmentDoc = gql`
+    fragment PartialTag on Tag {
+  id
+  displayName
+}
+    `;
 export const RegularEntryFragmentDoc = gql`
     fragment RegularEntry on Entry {
   id
@@ -313,12 +433,27 @@ export const RegularEntryFragmentDoc = gql`
   creator {
     ...RegularUser
   }
+  tags {
+    ...PartialTag
+  }
   title
   text
   points
   isHearted
   createdAt
   updatedAt
+}
+    ${RegularUserFragmentDoc}
+${PartialTagFragmentDoc}`;
+export const RegularTagFragmentDoc = gql`
+    fragment RegularTag on Tag {
+  id
+  creator {
+    ...RegularUser
+  }
+  displayName
+  name
+  createdAt
 }
     ${RegularUserFragmentDoc}`;
 export const RegularErrorFragmentDoc = gql`
@@ -377,6 +512,44 @@ export function useCreateEntryMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateEntryMutationHookResult = ReturnType<typeof useCreateEntryMutation>;
 export type CreateEntryMutationResult = Apollo.MutationResult<CreateEntryMutation>;
 export type CreateEntryMutationOptions = Apollo.BaseMutationOptions<CreateEntryMutation, CreateEntryMutationVariables>;
+export const CreateTagDocument = gql`
+    mutation CreateTag($name: String!) {
+  createTag(name: $name) {
+    errors {
+      ...RegularError
+    }
+    tag {
+      ...RegularTag
+    }
+  }
+}
+    ${RegularErrorFragmentDoc}
+${RegularTagFragmentDoc}`;
+export type CreateTagMutationFn = Apollo.MutationFunction<CreateTagMutation, CreateTagMutationVariables>;
+
+/**
+ * __useCreateTagMutation__
+ *
+ * To run a mutation, you first call `useCreateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTagMutation, { data, loading, error }] = useCreateTagMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useCreateTagMutation(baseOptions?: Apollo.MutationHookOptions<CreateTagMutation, CreateTagMutationVariables>) {
+        return Apollo.useMutation<CreateTagMutation, CreateTagMutationVariables>(CreateTagDocument, baseOptions);
+      }
+export type CreateTagMutationHookResult = ReturnType<typeof useCreateTagMutation>;
+export type CreateTagMutationResult = Apollo.MutationResult<CreateTagMutation>;
+export type CreateTagMutationOptions = Apollo.BaseMutationOptions<CreateTagMutation, CreateTagMutationVariables>;
 export const DeleteEntryDocument = gql`
     mutation DeleteEntry($id: Int!) {
   deleteEntry(id: $id)
@@ -538,6 +711,42 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const TagEntryDocument = gql`
+    mutation TagEntry($id: Int!, $tagIds: [Int!]!) {
+  tagEntry(id: $id, tagIds: $tagIds) {
+    id
+    tags {
+      ...PartialTag
+    }
+  }
+}
+    ${PartialTagFragmentDoc}`;
+export type TagEntryMutationFn = Apollo.MutationFunction<TagEntryMutation, TagEntryMutationVariables>;
+
+/**
+ * __useTagEntryMutation__
+ *
+ * To run a mutation, you first call `useTagEntryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTagEntryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [tagEntryMutation, { data, loading, error }] = useTagEntryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      tagIds: // value for 'tagIds'
+ *   },
+ * });
+ */
+export function useTagEntryMutation(baseOptions?: Apollo.MutationHookOptions<TagEntryMutation, TagEntryMutationVariables>) {
+        return Apollo.useMutation<TagEntryMutation, TagEntryMutationVariables>(TagEntryDocument, baseOptions);
+      }
+export type TagEntryMutationHookResult = ReturnType<typeof useTagEntryMutation>;
+export type TagEntryMutationResult = Apollo.MutationResult<TagEntryMutation>;
+export type TagEntryMutationOptions = Apollo.BaseMutationOptions<TagEntryMutation, TagEntryMutationVariables>;
 export const UpdateEntryDocument = gql`
     mutation UpdateEntry($id: Int!, $title: String!, $text: String!) {
   updateEntry(id: $id, title: $title, text: $text) {
@@ -643,6 +852,71 @@ export function useGetEntryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetEntryQueryHookResult = ReturnType<typeof useGetEntryQuery>;
 export type GetEntryLazyQueryHookResult = ReturnType<typeof useGetEntryLazyQuery>;
 export type GetEntryQueryResult = Apollo.QueryResult<GetEntryQuery, GetEntryQueryVariables>;
+export const GetTagDocument = gql`
+    query GetTag($id: Int!) {
+  tag(id: $id) {
+    ...RegularTag
+  }
+}
+    ${RegularTagFragmentDoc}`;
+
+/**
+ * __useGetTagQuery__
+ *
+ * To run a query within a React component, call `useGetTagQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTagQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTagQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTagQuery(baseOptions: Apollo.QueryHookOptions<GetTagQuery, GetTagQueryVariables>) {
+        return Apollo.useQuery<GetTagQuery, GetTagQueryVariables>(GetTagDocument, baseOptions);
+      }
+export function useGetTagLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTagQuery, GetTagQueryVariables>) {
+          return Apollo.useLazyQuery<GetTagQuery, GetTagQueryVariables>(GetTagDocument, baseOptions);
+        }
+export type GetTagQueryHookResult = ReturnType<typeof useGetTagQuery>;
+export type GetTagLazyQueryHookResult = ReturnType<typeof useGetTagLazyQuery>;
+export type GetTagQueryResult = Apollo.QueryResult<GetTagQuery, GetTagQueryVariables>;
+export const GetTagsDocument = gql`
+    query GetTags {
+  tags {
+    ...PartialTag
+  }
+}
+    ${PartialTagFragmentDoc}`;
+
+/**
+ * __useGetTagsQuery__
+ *
+ * To run a query within a React component, call `useGetTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTagsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTagsQuery(baseOptions?: Apollo.QueryHookOptions<GetTagsQuery, GetTagsQueryVariables>) {
+        return Apollo.useQuery<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, baseOptions);
+      }
+export function useGetTagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTagsQuery, GetTagsQueryVariables>) {
+          return Apollo.useLazyQuery<GetTagsQuery, GetTagsQueryVariables>(GetTagsDocument, baseOptions);
+        }
+export type GetTagsQueryHookResult = ReturnType<typeof useGetTagsQuery>;
+export type GetTagsLazyQueryHookResult = ReturnType<typeof useGetTagsLazyQuery>;
+export type GetTagsQueryResult = Apollo.QueryResult<GetTagsQuery, GetTagsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

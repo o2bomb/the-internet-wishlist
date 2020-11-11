@@ -1,0 +1,5 @@
+query GetTag($id: Int!) {
+  tag(id: $id) {
+    ...RegularTag
+  }
+}
