@@ -11,14 +11,17 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { getConnection } from "typeorm";
+import { getConnection, In } from "typeorm";
+import { Entry } from "../entities/Entry";
+import { EntryTag } from "../entities/EntryTag";
+import { Heart } from "../entities/Heart";
+import { User } from "../entities/User";
+import { FieldError } from "./FieldError";
 import { isAuth } from "../middlewares/isAuth";
 import { MyContext } from "../types";
-import { Entry } from "../entities/Entry";
-import { User } from "../entities/User";
-import { Heart } from "../entities/Heart";
-import { FieldError } from "./FieldError";
 import { validateCreateEntry } from "../utils/validateCreateEntry";
+import { isQueryError } from "../utils/isQueryError";
+import { Tag } from "../entities/Tag";
 
 @ObjectType()
 class EntryResponse {
@@ -40,6 +43,18 @@ class PaginatedEntries {
 
 @Resolver(Entry)
 export class EntryResolver {
+  @FieldResolver(() => [Tag])
+  async tags(@Root() entry: Entry): Promise<Tag[]> {
+    const entryTags = await EntryTag.find({
+      where: {
+        entryId: entry.id,
+      },
+      relations: ["tag"],
+    });
+
+    return entryTags.map((et) => et.tag);
+  }
+
   @FieldResolver(() => Boolean)
   async isHearted(
     @Root() entry: Entry,
@@ -59,9 +74,72 @@ export class EntryResolver {
   async creator(@Root() entry: Entry, @Ctx() { userLoader }: MyContext) {
     let user = null;
     if (entry.creatorId) {
-      user = await userLoader.load(entry.creatorId)
+      user = await userLoader.load(entry.creatorId);
     }
     return user;
+  }
+
+  @Mutation(() => Entry, { nullable: true })
+  @UseMiddleware(isAuth)
+  async tagEntry(
+    @Arg("id", () => Int) id: number,
+    @Arg("tagIds", () => [Int]) tagIds: number[],
+    @Ctx() { req }: MyContext
+  ) {
+    const entry = await Entry.findOne({
+      where: {
+        id,
+        creatorId: req.session.userId,
+      },
+    });
+
+    // Don't do anything if the entry doesn't belong to the user
+    if (!entry) {
+      return null;
+    }
+
+    // Search for duplicate tags that the entry already posseses
+    const entryTags = await EntryTag.find({
+      where: {
+        entryId: id,
+        tagId: In(tagIds)
+      }
+    })
+    
+    // Build insert values based on which tags the entry doesn't already have
+    let values: string = "";
+    const existingTagIds = entryTags.map((et) => et.tagId);
+    const filteredTagIds = tagIds.filter((tagId) => {
+      return !existingTagIds.includes(tagId);
+    });
+    if (filteredTagIds.length === 0) {
+      // If there are no tagIds to add
+      return null;
+    }
+    filteredTagIds.forEach((tagId, index, arr) => {
+      values += `(${id}, ${tagId})`;
+      if (index < arr.length - 1) {
+        values += ",";
+      }
+    })
+
+    try {
+      // Create multiple EntryTags
+      if (values) {
+        await getConnection().query(`
+          insert into entry_tag ("entryId", "tagId") values
+          ${values}
+        `);
+      }
+    } catch (e) {
+      if (isQueryError(e)) {
+        if (e.code === "23503") {
+          // Tag being inserted doesn't exist; do nothing
+        }
+      }
+    }
+
+    return Entry.findOne(id);
   }
 
   @Mutation(() => Entry, { nullable: true })
@@ -107,7 +185,7 @@ export class EntryResolver {
             .into(Heart)
             .values({
               entryId: id,
-              userId,
+              creatorId: userId,
             })
             .execute();
 

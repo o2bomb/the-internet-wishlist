@@ -7,14 +7,15 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 import { Entry } from "./entities/Entry";
-import { HelloResolver } from "./resolvers/hello";
 import { Heart } from "./entities/Heart";
 import { User } from "./entities/User";
-import { EntryResolver } from "./resolvers/entry";
-import { UserResolver } from "./resolvers/user";
-import { COOKIE_NAME, __prod__ } from "./constants";
 import { EntryTag } from "./entities/EntryTag";
 import { Tag } from "./entities/Tag";
+import { HelloResolver } from "./resolvers/hello";
+import { EntryResolver } from "./resolvers/entry";
+import { UserResolver } from "./resolvers/user";
+import { TagResolver } from "./resolvers/tag";
+import { COOKIE_NAME, __prod__ } from "./constants";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createHeartLoader } from "./utils/createHeartLoader";
 
@@ -33,6 +34,8 @@ const main = async () => {
 
   // await Entry.delete({});
   // await User.delete({});
+  // await EntryTag.delete({});
+  // await Tag.delete({});
 
   const app = express();
   
@@ -64,7 +67,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, EntryResolver, UserResolver],
+      resolvers: [HelloResolver, EntryResolver, UserResolver, TagResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({

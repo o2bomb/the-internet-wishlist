@@ -10,10 +10,10 @@ import { User } from "./User";
 @Entity()
 export class Heart extends BaseEntity {
   @PrimaryColumn()
-  userId: number;
+  creatorId: number;
 
   @ManyToOne(() => User, (user) => user.hearts)
-  user: User;
+  creator: User;
 
   @PrimaryColumn()
   entryId: number;

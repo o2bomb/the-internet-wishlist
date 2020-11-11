@@ -12,12 +12,12 @@ export class EntryTag extends BaseEntity {
   @PrimaryColumn()
   entryId: number;
 
-  @ManyToOne(() => Entry, (entry) => entry.tags)
+  @ManyToOne(() => Entry, (entry) => entry.tags, { onDelete: "CASCADE" })
   entry: Entry;
 
   @PrimaryColumn()
   tagId: number;
 
-  @ManyToOne(() => Tag, (tag) => tag.entries)
+  @ManyToOne(() => Tag, (tag) => tag.entries, { onDelete: "CASCADE" })
   tag: Tag;
 }

@@ -4,10 +4,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 import { EntryTag } from "./EntryTag";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -16,8 +19,19 @@ export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column()
+  creatorId: number;
+
+  @Field({ nullable: true })
+  @ManyToOne(() => User, (user) => user.tags, { nullable: true })
+  creator: User;
+
   @OneToMany(() => EntryTag, (tag) => tag.tag)
   entries: EntryTag[];
+
+  @Field()
+  @Column()
+  displayName!: string;
 
   @Field()
   @Column({ unique: true })

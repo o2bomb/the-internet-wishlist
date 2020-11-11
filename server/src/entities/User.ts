@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Entry } from "./Entry";
 import { Heart } from "./Heart";
+import { Tag } from "./Tag";
 
 @ObjectType()
 @Entity()
@@ -21,8 +22,11 @@ export class User extends BaseEntity {
   @OneToMany(() => Entry, entry => entry.creator)
   entries: Entry[];
 
-  @OneToMany(() => Heart, heart => heart.user)
+  @OneToMany(() => Heart, heart => heart.creator)
   hearts: Heart[];
+
+  @OneToMany(() => Tag, tag => tag.creator)
+  tags: Tag[];
 
   @Field()
   @Column()
