@@ -1,14 +1,11 @@
 import { gql } from "@apollo/client";
-import { Button } from "@chakra-ui/core";
+import { Button, Stack } from "@chakra-ui/core";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
 import { InputField } from "../components/InputField";
 import { Layout } from "../components/Layout";
-import {
-  PaginatedEntries,
-  useCreateEntryMutation
-} from "../generated/graphql";
+import { PaginatedEntries, useCreateEntryMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 
 interface CreateEntryProps {}
@@ -74,9 +71,11 @@ const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField name="title" label="Title" placeholder="I wish..." />
-            <InputField name="text" label="Description" textArea={true} />
-            <Button mt={4} isLoading={isSubmitting} type="submit">
+            <Stack spacing={2} mb={4}>
+              <InputField name="title" label="Title" placeholder="I wish..." />
+              <InputField name="text" label="Description" textArea={true} />
+            </Stack>
+            <Button isLoading={isSubmitting} type="submit">
               Create entry
             </Button>
           </Form>

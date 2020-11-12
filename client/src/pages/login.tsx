@@ -1,7 +1,7 @@
 import React from "react";
 import NextLink from "next/link";
 import { gql } from "@apollo/client";
-import { Button, Flex, Link } from "@chakra-ui/core";
+import { Button, Flex, Link, Stack } from "@chakra-ui/core";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
 import { InputField } from "../components/InputField";
@@ -57,8 +57,10 @@ const Login: React.FC<{}> = ({}) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField name="usernameOrEmail" label="Username or Email" />
-            <InputField name="password" label="Password" type="password" />
+            <Stack spacing={2} mb={4}>
+              <InputField name="usernameOrEmail" label="Username or Email" />
+              <InputField name="password" label="Password" type="password" />
+            </Stack>
             <Flex mt={4} justifyContent="space-between">
               <Button isLoading={isSubmitting} type="submit">
                 Login

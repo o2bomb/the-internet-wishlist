@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button } from "@chakra-ui/core";
+import { Button, Stack } from "@chakra-ui/core";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
@@ -57,9 +57,11 @@ const Register: React.FC<{}> = ({}) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField name="username" label="Username" />
-            <InputField name="email" label="Email" type="email" />
-            <InputField name="password" label="Password" type="password" />
+            <Stack spacing={2} mb={4}>
+              <InputField name="username" label="Username" />
+              <InputField name="email" label="Email" type="email" />
+              <InputField name="password" label="Password" type="password" />
+            </Stack>
             <Button mt={4} isLoading={isSubmitting} type="submit">
               Create account
             </Button>
