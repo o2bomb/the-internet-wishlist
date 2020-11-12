@@ -23,7 +23,7 @@ import { validateCreateEntry } from "../utils/validateCreateEntry";
 import { validateUpdateEntry } from "../utils/validateUpdateEntry";
 import { isQueryError } from "../utils/isQueryError";
 import { Tag } from "../entities/Tag";
-import { UserInputError } from "apollo-server-express";
+import { ForbiddenError, UserInputError } from "apollo-server-express";
 
 @ObjectType()
 class EntryResponse {
@@ -317,7 +317,11 @@ export class EntryResolver {
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
   ) {
-    await Entry.delete({ id, creatorId: req.session.userId });
+    const result = await Entry.delete({ id, creatorId: req.session.userId });
+    if (result.affected === 0) {
+      // Failed to delete entry
+      throw new ForbiddenError("Failed to delete entry");
+    }
     return true;
   }
 }
