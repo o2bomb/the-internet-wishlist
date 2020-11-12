@@ -1,5 +1,5 @@
-mutation UpdateEntry($id: Int!, $title: String!, $text: String!) {
-  updateEntry(id: $id, title: $title, text: $text) {
+mutation UpdateEntry($id: Int!, $text: String!) {
+  updateEntry(id: $id, text: $text) {
     ...RegularEntry
   }
 }

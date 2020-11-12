@@ -20,8 +20,10 @@ import { FieldError } from "./FieldError";
 import { isAuth } from "../middlewares/isAuth";
 import { MyContext } from "../types";
 import { validateCreateEntry } from "../utils/validateCreateEntry";
+import { validateUpdateEntry } from "../utils/validateUpdateEntry";
 import { isQueryError } from "../utils/isQueryError";
 import { Tag } from "../entities/Tag";
+import { UserInputError } from "apollo-server-express";
 
 @ObjectType()
 class EntryResponse {
@@ -102,10 +104,10 @@ export class EntryResolver {
     const entryTags = await EntryTag.find({
       where: {
         entryId: id,
-        tagId: In(tagIds)
-      }
-    })
-    
+        tagId: In(tagIds),
+      },
+    });
+
     // Build insert values based on which tags the entry doesn't already have
     let values: string = "";
     const existingTagIds = entryTags.map((et) => et.tagId);
@@ -121,7 +123,7 @@ export class EntryResolver {
       if (index < arr.length - 1) {
         values += ",";
       }
-    })
+    });
 
     try {
       // Create multiple EntryTags
@@ -150,7 +152,9 @@ export class EntryResolver {
     @Ctx() { req }: MyContext
   ): Promise<Entry | null> {
     const { userId } = req.session;
-    const heart = await Heart.findOne({ where: { entryId: id, creatorId: userId } });
+    const heart = await Heart.findOne({
+      where: { entryId: id, creatorId: userId },
+    });
     let entry = null;
 
     if (deleteHeart) {
@@ -287,6 +291,12 @@ export class EntryResolver {
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
   ): Promise<Entry | null> {
+    const errors = validateUpdateEntry(text);
+
+    if (errors) {
+      throw new UserInputError(errors[0].message);
+    }
+
     const result = await getConnection()
       .createQueryBuilder()
       .update(Entry)

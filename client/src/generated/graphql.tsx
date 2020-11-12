@@ -111,7 +111,6 @@ export type MutationCreateEntryArgs = {
 
 export type MutationUpdateEntryArgs = {
   text: Scalars['String'];
-  title: Scalars['String'];
   id: Scalars['Int'];
 };
 
@@ -333,7 +332,6 @@ export type TagEntryMutation = (
 
 export type UpdateEntryMutationVariables = Exact<{
   id: Scalars['Int'];
-  title: Scalars['String'];
   text: Scalars['String'];
 }>;
 
@@ -748,8 +746,8 @@ export type TagEntryMutationHookResult = ReturnType<typeof useTagEntryMutation>;
 export type TagEntryMutationResult = Apollo.MutationResult<TagEntryMutation>;
 export type TagEntryMutationOptions = Apollo.BaseMutationOptions<TagEntryMutation, TagEntryMutationVariables>;
 export const UpdateEntryDocument = gql`
-    mutation UpdateEntry($id: Int!, $title: String!, $text: String!) {
-  updateEntry(id: $id, title: $title, text: $text) {
+    mutation UpdateEntry($id: Int!, $text: String!) {
+  updateEntry(id: $id, text: $text) {
     ...RegularEntry
   }
 }
@@ -770,7 +768,6 @@ export type UpdateEntryMutationFn = Apollo.MutationFunction<UpdateEntryMutation,
  * const [updateEntryMutation, { data, loading, error }] = useUpdateEntryMutation({
  *   variables: {
  *      id: // value for 'id'
- *      title: // value for 'title'
  *      text: // value for 'text'
  *   },
  * });
