@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/core";
+import { Button, Stack, useToast } from "@chakra-ui/core";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
@@ -13,6 +13,7 @@ import { getIdFromUrl } from "../../../utils/getIdFromUrl";
 export const EditEntry = ({}) => {
   const router = useRouter();
   const intId = getIdFromUrl();
+  const toast = useToast();
   const { data, loading } = useGetEntryQuery({
     skip: intId === -1,
     variables: {
@@ -50,6 +51,13 @@ export const EditEntry = ({}) => {
               // send user back to previous page
               router.back();
             }
+
+            toast({
+              title: "Entry udpated successfully!",
+              status: "success",
+              duration: 1000,
+              isClosable: true,
+            });
           } catch (e) {
             setErrors({
               text: e.graphQLErrors[0].message,
@@ -59,13 +67,15 @@ export const EditEntry = ({}) => {
       >
         {({ isSubmitting }) => (
           <Form>
-            <InputField
-              name="title"
-              label="Title"
-              placeholder="I wish..."
-              disabled
-            />
-            <InputField name="text" label="Description" textArea={true} />
+            <Stack spacing={2} mb={4}>
+              <InputField
+                name="title"
+                label="Title"
+                placeholder="I wish..."
+                disabled
+              />
+              <InputField name="text" label="Description" textArea={true} />
+            </Stack>
             <Button mt={4} isLoading={isSubmitting} type="submit">
               Edit entry
             </Button>
