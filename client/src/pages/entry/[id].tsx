@@ -1,4 +1,4 @@
-import { Heading, Text } from "@chakra-ui/core";
+import { Heading, Stack, Tag, Text } from "@chakra-ui/core";
 import React from "react";
 import { EditDeleteEntryButtons } from "../../components/EditDeleteEntryButtons";
 import { Layout } from "../../components/Layout";
@@ -19,16 +19,17 @@ const Entry = ({}) => {
     return <Layout>Could not find entry</Layout>;
   }
 
+  const { title, text, id, creatorId, tags } = data.entry;
   return (
     <Layout variant="small">
       <Heading mb={4} as="h2" size="lg">
-        {data.entry.title}
+        {title}
       </Heading>
-      {data.entry.text ? <Text mb={4}>{data.entry.text}</Text> : null}
-      <EditDeleteEntryButtons
-        id={data.entry.id}
-        creatorId={data.entry.creatorId}
-      />
+      {text ? <Text mb={4}>{text}</Text> : null}
+      <Stack flexWrap="wrap" direction="row" mt={-2} mb={4}>
+        {tags ? tags.map((t) => <Tag mt={2}>{t.displayName}</Tag>) : null}
+      </Stack>
+      <EditDeleteEntryButtons id={id} creatorId={creatorId} />
     </Layout>
   );
 };
