@@ -1,61 +1,28 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  Stack,
-  Tag,
-  useToast,
-} from "@chakra-ui/core";
 import React from "react";
-import {
-  RegularEntryFragment,
-  useHeartEntryMutation,
-  useMeQuery,
-} from "../generated/graphql";
+import NextLink from "next/link";
+import { Box, Flex, Heading, Link, Stack, Tag } from "@chakra-ui/core";
+import { RegularEntryFragment, useMeQuery } from "../generated/graphql";
+import { HeartButton } from "./HeartButton";
 
 interface EntryCardProps {
   entry: RegularEntryFragment;
 }
 
 export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
-  const { id, title, isHearted, text, points, creator, tags } = entry;
-  const toast = useToast();
+  const { id, title, text, points, creator, tags, creatorId } = entry;
   const { data } = useMeQuery();
-  const [heartEntry] = useHeartEntryMutation();
   return (
     <Box padding={4} maxW="20rem" borderWidth="1px" rounded=".25rem">
       <Stack spacing={1}>
         <Flex direction="row" justifyContent="space-between">
-          <Heading as="h2" size="lg">
-            {title}
-          </Heading>
-          {data?.me?.id === creator?.id ? null : (
-            <IconButton
-              onClick={async () => {
-                await heartEntry({
-                  variables: {
-                    id,
-                    deleteHeart: isHearted,
-                  },
-                }).catch((e) => {
-                  // error occurred, notify user
-                  console.log(e);
-
-                  toast({
-                    title: "You must be logged in to like an entry!",
-                    status: "error",
-                    duration: 1000,
-                    isClosable: true,
-                  });
-                });
-              }}
-              variantColor={isHearted ? "red" : undefined}
-              aria-label="Heart entry"
-              icon="heart"
-              isRound
-            />
-          )}
+          <NextLink href="/entry/[id]" as={`/entry/${id}`} passHref>
+            <Link>
+              <Heading as="h2" size="lg">
+                {title}
+              </Heading>
+            </Link>
+          </NextLink>
+          {data?.me?.id === creatorId ? null : <HeartButton entry={entry} />}
         </Flex>
         {text && <Box>{text}</Box>}
         <Box color="gray.500" letterSpacing="wide" fontSize="sm">
