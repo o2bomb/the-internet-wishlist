@@ -31,7 +31,7 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
         </Box>
         <Box></Box>
         <Stack flexWrap="wrap" direction="row" mt={-2}>
-          {tags ? tags.map((t) => <Tag mt={2}>{t.displayName}</Tag>) : null}
+          {tags ? tags.map((t, index) => <Tag key={index} mt={2}>{t.displayName}</Tag>) : null}
         </Stack>
       </Stack>
     </Box>
