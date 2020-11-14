@@ -27,7 +27,7 @@ const Entry = ({}) => {
       </Heading>
       {text ? <Text mb={4}>{text}</Text> : null}
       <Stack flexWrap="wrap" direction="row" mt={-2} mb={4}>
-        {tags ? tags.map((t) => <Tag mt={2}>{t.displayName}</Tag>) : null}
+        {tags ? tags.map((t, index) => <Tag key={index} mt={2}>{t.displayName}</Tag>) : null}
       </Stack>
       <EditDeleteEntryButtons id={id} creatorId={creatorId} />
     </Layout>
