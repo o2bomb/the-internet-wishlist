@@ -1,12 +1,13 @@
-import { Button, Stack, useToast } from "@chakra-ui/core";
+import { Button, Flex, Stack, useToast } from "@chakra-ui/core";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
+import { EditEntryTagsModal } from "../../../components/EditEntryTagsModal";
 import { InputField } from "../../../components/InputField";
 import { Layout } from "../../../components/Layout";
 import {
   useGetEntryQuery,
-  useUpdateEntryMutation,
+  useUpdateEntryMutation
 } from "../../../generated/graphql";
 import { getIdFromUrl } from "../../../utils/getIdFromUrl";
 
@@ -30,12 +31,14 @@ export const EditEntry = ({}) => {
     return <Layout>Could not find entry</Layout>;
   }
 
+  const { id, tags, title, text } = data.entry;
+
   return (
     <Layout variant="small">
       <Formik
         initialValues={{
-          title: data.entry.title,
-          text: data.entry.text,
+          title,
+          text,
         }}
         onSubmit={async (values, { setErrors }) => {
           let response;
@@ -76,9 +79,12 @@ export const EditEntry = ({}) => {
               />
               <InputField name="text" label="Description" textArea={true} />
             </Stack>
-            <Button mt={4} isLoading={isSubmitting} type="submit">
-              Edit entry
-            </Button>
+            <Flex>
+              <Button mr={4} isLoading={isSubmitting} type="submit">
+                Edit entry
+              </Button>
+              <EditEntryTagsModal id={id} tags={tags} />
+            </Flex>
           </Form>
         )}
       </Formik>
