@@ -6,7 +6,7 @@ interface ViewportProviderProps {
   children: ReactNode;
 }
 
-type ViewportValues = {
+export type ViewportValues = {
   width: number;
   height: number;
 }
@@ -24,7 +24,11 @@ const viewportContext = React.createContext<ViewportContext>({
  */
 export const ViewportProvider: React.FC<ViewportProviderProps> = ({ children }) => {
   if (isServer()) {
-    return null;
+    return (
+      <viewportContext.Provider value={{ width: 0, height: 0 }}>
+        {children}
+      </viewportContext.Provider>
+    );
   }
 
   const [width, setWidth] = React.useState(window.innerWidth);
