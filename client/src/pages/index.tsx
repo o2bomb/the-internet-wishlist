@@ -37,29 +37,6 @@ const Index = () => {
                 variables: {
                   cursor: data?.entries.cursor,
                 },
-                // OLD WAY Of UPDATING QUERY IN CACHE
-                // updateQuery: (
-                //   previousValue,
-                //   { fetchMoreResult }
-                // ): GetEntriesQuery => {
-                //   if (!fetchMoreResult) {
-                //     return previousValue as GetEntriesQuery;
-                //   }
-
-                //   return {
-                //     __typename: "Query",
-                //     entries: {
-                //       __typename: "PaginatedEntries",
-                //       cursor: (fetchMoreResult as GetEntriesQuery).entries.cursor,
-                //       hasMore: (fetchMoreResult as GetEntriesQuery).entries
-                //         .hasMore,
-                //       entries: [
-                //         ...previousValue.entries.entries,
-                //         ...(fetchMoreResult as GetEntriesQuery).entries.entries,
-                //       ],
-                //     },
-                //   };
-                // },
               });
             }
           }}
