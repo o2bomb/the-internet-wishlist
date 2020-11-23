@@ -79,7 +79,7 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
 
   return (
     <Flex padding={4} align="center">
-      <NextLink href="/">
+      <NextLink href="/" passHref>
         <Link>
           <Heading mr={4} as="h1">
             TIW
@@ -94,7 +94,7 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
       {navigation ? (
         <>
           <NextLink href="/create-entry" passHref>
-            {viewportValues.width < 620 ? (
+            {viewportValues.width < 720 ? (
               <IconButton icon={<AddIcon />} mr={4} aria-label="Create post" />
             ) : (
               <Button as={Link} mr={4}>
