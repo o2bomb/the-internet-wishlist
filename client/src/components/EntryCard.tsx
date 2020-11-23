@@ -1,6 +1,6 @@
 import React from "react";
 import NextLink from "next/link";
-import { Box, Flex, Heading, Link, Stack, Tag } from "@chakra-ui/react";
+import { Box, Flex, Heading, Link, Tag } from "@chakra-ui/react";
 import { RegularEntryFragment, useMeQuery } from "../generated/graphql";
 import { HeartButton } from "./HeartButton";
 
@@ -12,7 +12,7 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
   const { id, title, text, points, creator, tags, creatorId } = entry;
   const { data } = useMeQuery();
   return (
-    <Box padding={4} maxW="20rem" borderWidth="1px" rounded=".25rem">
+    <Box padding={4} maxW="40rem" borderWidth="1px" rounded=".25rem">
       <Flex mb={2} direction="row" justifyContent="space-between">
         <NextLink href="/entry/[id]" as={`/entry/${id}`} passHref>
           <Link>
@@ -29,7 +29,7 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
         {creator ? creator.displayName : "Anonymous"}
       </Box>
       <Flex wrap="wrap" mt={-2}>
-        {tags ? tags.map((t, index) => <Tag key={index} mt={2} mr={1}>{t.displayName}</Tag>) : null}
+        {tags ? tags.map((t, index) => <Tag key={index} mt={2} mr={2}>{t.displayName}</Tag>) : null}
       </Flex>
     </Box>
   );
