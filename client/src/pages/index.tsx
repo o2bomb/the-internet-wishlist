@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from "@chakra-ui/core";
+import { Box, Button, Stack } from "@chakra-ui/react";
 import React from "react";
 import { EntryCard } from "../components/EntryCard";
 import { Layout } from "../components/Layout";

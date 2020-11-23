@@ -1,4 +1,5 @@
 import { useApolloClient } from "@apollo/client";
+import { AddIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -11,9 +12,10 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
+import { UserIcon } from "../constants";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import { useViewport } from "../utils/ViewportProvider";
@@ -54,7 +56,7 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
             <MenuButton
               as={IconButton}
               aria-label="User options"
-              icon={isOpen ? "chevron-up" : "user"}
+              icon={isOpen ? <ChevronUpIcon /> : <UserIcon />}
               isRound
             />
             <MenuList>
@@ -93,7 +95,7 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
         <>
           <NextLink href="/create-entry" passHref>
             {viewportValues.width < 620 ? (
-              <IconButton icon="add" mr={4} aria-label="Create post" />
+              <IconButton icon={<AddIcon />} mr={4} aria-label="Create post" />
             ) : (
               <Button as={Link} mr={4}>
                 Create a post

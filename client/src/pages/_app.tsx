@@ -1,8 +1,8 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { ThemeProvider, CSSReset, ColorModeProvider } from "@chakra-ui/core";
 import { PaginatedEntries } from "../generated/graphql";
 import { ViewportProvider } from "../utils/ViewportProvider";
 import theme from "../theme";
+import { ChakraProvider } from "@chakra-ui/react";
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
@@ -36,12 +36,9 @@ function MyApp({ Component, pageProps }) {
   return (
     <ApolloProvider client={client}>
       <ViewportProvider>
-        <ThemeProvider theme={theme}>
-          <ColorModeProvider>
-            <CSSReset />
-            <Component {...pageProps} />
-          </ColorModeProvider>
-        </ThemeProvider>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
       </ViewportProvider>
     </ApolloProvider>
   );

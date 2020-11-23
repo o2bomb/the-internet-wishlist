@@ -1,3 +1,4 @@
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Modal,
   ModalOverlay,
@@ -12,7 +13,7 @@ import {
   TagLabel,
   IconButton,
   Text,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
   PartialTagFragment,
@@ -76,8 +77,8 @@ export const EditEntryTagsModal: React.FC<EditEntryTagsModalProps> = ({
             }}
             ml={-2}
             mr={1}
-            size="xs"
-            icon="add"
+            boxSize="xs"
+            icon={<AddIcon />}
             variant="ghost"
             aria-label="Add tag"
             isRound
@@ -127,7 +128,7 @@ export const EditEntryTagsModal: React.FC<EditEntryTagsModalProps> = ({
                 });
                 onClose();
               }}
-              variantColor="green"
+              colorScheme="green"
             >
               Confirm selection
             </Button>

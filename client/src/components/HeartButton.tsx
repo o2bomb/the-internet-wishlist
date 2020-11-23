@@ -1,5 +1,6 @@
-import { IconButton, useToast } from "@chakra-ui/core";
+import { IconButton, useToast } from "@chakra-ui/react";
 import React from "react";
+import { HeartIcon } from "../constants";
 import {
   RegularEntryFragment,
   useHeartEntryMutation,
@@ -34,9 +35,9 @@ export const HeartButton: React.FC<HeartButtonProps> = ({ entry }) => {
           });
         });
       }}
-      variantColor={isHearted ? "red" : undefined}
+      colorScheme={isHearted ? "red" : undefined}
       aria-label="Heart entry"
-      icon="heart"
+      icon={<HeartIcon />}
       isRound
     />
   );

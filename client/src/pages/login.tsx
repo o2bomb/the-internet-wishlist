@@ -1,7 +1,7 @@
 import React from "react";
 import NextLink from "next/link";
 import { gql } from "@apollo/client";
-import { Button, Flex, Link, Stack } from "@chakra-ui/core";
+import { Button, Flex, Link, Stack } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
 import { InputField } from "../components/InputField";

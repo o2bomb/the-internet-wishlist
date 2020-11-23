@@ -1,4 +1,5 @@
-import { InputGroup, InputLeftElement, Icon, Input } from "@chakra-ui/core";
+import { SearchIcon } from "@chakra-ui/icons";
+import { Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import React, { useCallback } from "react";
 import { debounce } from "../utils/debounce";
 
@@ -13,8 +14,8 @@ export const SearchInput: React.FC<SearchInputProps> = ({}) => {
   }, 2500), []);
 
   return (
-    <InputGroup>
-      <InputLeftElement children={<Icon name="search" />} />
+    <InputGroup maxW={80}>
+      <InputLeftElement children={<SearchIcon />} />
       <Input
         value={value}
         onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {

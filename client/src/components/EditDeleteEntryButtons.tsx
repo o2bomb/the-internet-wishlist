@@ -11,7 +11,8 @@ import {
   ModalBody,
   ModalFooter,
   useToast,
-} from "@chakra-ui/core";
+} from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
 import { PaginatedEntries, useDeleteEntryMutation, useMeQuery } from "../generated/graphql";
 import { useRouter } from "next/router";
 
@@ -80,7 +81,7 @@ export const EditDeleteEntryButtons: React.FC<EditDeleteEntryButtonsProps> = ({
               // Failed to delete entry
               router.push("/");
             }
-          }} variantColor="red">
+          }} colorScheme="red">
             Delete entry
           </Button>
         </ModalFooter>
@@ -93,7 +94,7 @@ export const EditDeleteEntryButtons: React.FC<EditDeleteEntryButtonsProps> = ({
       <NextLink href="/entry/edit/[id]" as={`/entry/edit/${id}`} passHref>
         <Button mr={4}>Edit entry</Button>
       </NextLink>
-      <IconButton onClick={onOpen} icon="delete" aria-label="Delete entry" />
+      <IconButton onClick={onOpen} icon={<DeleteIcon />} aria-label="Delete entry" />
       {ConfirmDelete}
     </>
   ) : null;

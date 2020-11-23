@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Button, Stack } from "@chakra-ui/core";
+import { Button, Stack } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";

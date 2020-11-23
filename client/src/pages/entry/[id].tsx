@@ -1,4 +1,4 @@
-import { Heading, Stack, Tag, Text } from "@chakra-ui/core";
+import { Heading, Stack, Tag, Text } from "@chakra-ui/react";
 import React from "react";
 import { EditDeleteEntryButtons } from "../../components/EditDeleteEntryButtons";
 import { Layout } from "../../components/Layout";
