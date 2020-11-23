@@ -1,6 +1,7 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
 import { NavBar } from "./NavBar";
+import { motion } from "framer-motion";
 
 type LayoutVariant = "small" | "regular" | "large";
 
@@ -9,9 +10,13 @@ interface LayoutProps {
   variant?: LayoutVariant;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, variant, navigation }) => {
+export const Layout: React.FC<LayoutProps> = ({
+  children,
+  variant,
+  navigation,
+}) => {
   let maxWidth;
-  switch(variant) {
+  switch (variant) {
     case "small":
       maxWidth = "40rem";
       break;
@@ -25,7 +30,25 @@ export const Layout: React.FC<LayoutProps> = ({ children, variant, navigation })
   return (
     <Box>
       <NavBar navigation={navigation} />
-      <Box marginX="auto" paddingX={4} maxW={maxWidth}>{children}</Box>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {
+            opacity: 0,
+          },
+          visible: {
+            opacity: 1,
+            transition: {
+              delay: 0.2,
+            },
+          },
+        }}
+      >
+        <Box marginX="auto" paddingX={4} maxW={maxWidth}>
+          {children}
+        </Box>
+      </motion.div>
     </Box>
   );
 };
