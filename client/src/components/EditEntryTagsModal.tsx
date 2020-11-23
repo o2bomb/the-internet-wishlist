@@ -13,6 +13,8 @@ import {
   TagLabel,
   IconButton,
   Text,
+  Flex,
+  Box,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
@@ -20,6 +22,7 @@ import {
   useGetTagsQuery,
   useTagEntryMutation,
 } from "../generated/graphql";
+import { TagContainer } from "./TagContainer";
 
 interface EditEntryTagsModalProps {
   id: number;
@@ -33,14 +36,16 @@ export const EditEntryTagsModal: React.FC<EditEntryTagsModalProps> = ({
   const { data, loading, error } = useGetTagsQuery();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [tagEntry] = useTagEntryMutation();
-  const [tagsToRemove, setTagsToRemove] = useState<Set<PartialTagFragment>>(new Set(tags));
+  const [tagsToRemove, setTagsToRemove] = useState<Set<PartialTagFragment>>(
+    new Set(tags)
+  );
 
-  const CurrentTags = () => {    
+  const CurrentTags = () => {
     return tagsToRemove.size === 0 ? (
       <>No tags currently attached to entry</>
     ) : (
       Array.from(tagsToRemove).map((t, index) => (
-        <Tag key={index} mt={2}>
+        <Tag key={index}>
           <TagLabel>{t.displayName}</TagLabel>
         </Tag>
       ))
@@ -66,7 +71,7 @@ export const EditEntryTagsModal: React.FC<EditEntryTagsModalProps> = ({
         return !currentTagIds.includes(t.id);
       })
       .map((t, index) => (
-        <Tag key={index} mt={2}>
+        <Tag key={index}>
           <IconButton
             onClick={() => {
               setTagsToRemove((prev) => {
@@ -77,7 +82,7 @@ export const EditEntryTagsModal: React.FC<EditEntryTagsModalProps> = ({
             }}
             ml={-2}
             mr={1}
-            boxSize="xs"
+            size="xs"
             icon={<AddIcon />}
             variant="ghost"
             aria-label="Add tag"
@@ -104,15 +109,13 @@ export const EditEntryTagsModal: React.FC<EditEntryTagsModalProps> = ({
             <Text mb={2} fontSize="lg">
               Current tags:
             </Text>
-            <Stack flexWrap="wrap" direction="row" mt={-2} mb={4}>
-              {CurrentTags()}
-            </Stack>
+            <Box mb={2}>
+              <TagContainer>{CurrentTags()}</TagContainer>
+            </Box>
             <Text mb={2} fontSize="lg">
               Available tags:
             </Text>
-            <Stack flexWrap="wrap" direction="row" mt={-2}>
-              {AvailableTags()}
-            </Stack>
+            <TagContainer>{AvailableTags()}</TagContainer>
           </ModalBody>
           <ModalFooter>
             <Button mr={3} onClick={onClose}>

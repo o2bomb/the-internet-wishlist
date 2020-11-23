@@ -1,7 +1,8 @@
-import { Heading, Stack, Tag, Text } from "@chakra-ui/react";
+import { Box, Heading, Stack, Tag, Text } from "@chakra-ui/react";
 import React from "react";
 import { EditDeleteEntryButtons } from "../../components/EditDeleteEntryButtons";
 import { Layout } from "../../components/Layout";
+import { TagContainer } from "../../components/TagContainer";
 import { getEntryFromUrl } from "../../utils/getEntryFromUrl";
 
 const Entry = ({}) => {
@@ -26,9 +27,13 @@ const Entry = ({}) => {
         {title}
       </Heading>
       {text ? <Text mb={4}>{text}</Text> : null}
-      <Stack flexWrap="wrap" direction="row" mt={-2} mb={4}>
-        {tags ? tags.map((t, index) => <Tag key={index} mt={2}>{t.displayName}</Tag>) : null}
-      </Stack>
+      <Box mb={4}>
+        <TagContainer>
+          {tags
+            ? tags.map((t, index) => <Tag key={index}>{t.displayName}</Tag>)
+            : null}
+        </TagContainer>
+      </Box>
       <EditDeleteEntryButtons id={id} creatorId={creatorId} />
     </Layout>
   );

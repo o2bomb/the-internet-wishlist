@@ -3,6 +3,7 @@ import NextLink from "next/link";
 import { Box, Flex, Heading, Link, Tag } from "@chakra-ui/react";
 import { RegularEntryFragment, useMeQuery } from "../generated/graphql";
 import { HeartButton } from "./HeartButton";
+import { TagContainer } from "./TagContainer";
 
 interface EntryCardProps {
   entry: RegularEntryFragment;
@@ -28,9 +29,9 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
         {points ? `${points} points` : "No points"} &bull; By{" "}
         {creator ? creator.displayName : "Anonymous"}
       </Box>
-      <Flex wrap="wrap" mt={-2}>
-        {tags ? tags.map((t, index) => <Tag key={index} mt={2} mr={2}>{t.displayName}</Tag>) : null}
-      </Flex>
+      <TagContainer>
+        {tags ? tags.map((t, index) => <Tag key={index}>{t.displayName}</Tag>) : null}
+      </TagContainer>
     </Box>
   );
 };
