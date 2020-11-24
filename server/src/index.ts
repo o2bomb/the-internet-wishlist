@@ -1,23 +1,23 @@
-import express from "express";
-import path from "path";
-import session from "express-session";
-import connectRedis from "connect-redis";
-import Redis from "ioredis";
 import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
+import connectRedis from "connect-redis";
+import express from "express";
+import session from "express-session";
+import Redis from "ioredis";
+import path from "path";
+import { buildSchema, registerEnumType } from "type-graphql";
 import { createConnection } from "typeorm";
-import { Entry } from "./entities/Entry";
-import { Heart } from "./entities/Heart";
-import { User } from "./entities/User";
-import { EntryTag } from "./entities/EntryTag";
-import { Tag } from "./entities/Tag";
-import { HelloResolver } from "./resolvers/hello";
-import { EntryResolver } from "./resolvers/entry";
-import { UserResolver } from "./resolvers/user";
-import { TagResolver } from "./resolvers/tag";
 import { COOKIE_NAME, __prod__ } from "./constants";
-import { createUserLoader } from "./utils/createUserLoader";
+import { Entry } from "./entities/Entry";
+import { EntryTag } from "./entities/EntryTag";
+import { Heart } from "./entities/Heart";
+import { Tag } from "./entities/Tag";
+import { User } from "./entities/User";
+import { EntryResolver, SortBy } from "./resolvers/entry";
+import { HelloResolver } from "./resolvers/hello";
+import { TagResolver } from "./resolvers/tag";
+import { UserResolver } from "./resolvers/user";
 import { createHeartLoader } from "./utils/createHeartLoader";
+import { createUserLoader } from "./utils/createUserLoader";
 
 const main = async () => {
   const conn = await createConnection({
@@ -34,8 +34,8 @@ const main = async () => {
 
   // await Entry.delete({});
   // await User.delete({});
-  // await EntryTag.delete({});
-  // await Tag.delete({});
+  // await EntryTag.delete({}); 
+  // await Tag.delete({}); 
 
   const app = express();
   
@@ -64,6 +64,11 @@ const main = async () => {
       resave: false,
     })
   );
+
+  registerEnumType(SortBy, {
+    name: "SortBy",
+    description: "Options to sort search results"
+  })
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({

@@ -53,4 +53,7 @@ export class Entry extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column("tsvector", { select: false })
+  document_with_weights: any;
 }

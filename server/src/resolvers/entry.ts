@@ -25,6 +25,13 @@ import { isQueryError } from "../utils/isQueryError";
 import { Tag } from "../entities/Tag";
 import { ForbiddenError, UserInputError } from "apollo-server-express";
 
+export enum SortBy {
+  NEWEST = "NEWEST",
+  OLDEST = "OLDEST",
+  MOST_HEARTS = "MOST_HEARTS",
+  LEAST_HEARTS = "LEAST_HEARTS"
+}
+
 @ObjectType()
 class EntryResponse {
   @Field(() => [FieldError], { nullable: true })
@@ -79,6 +86,36 @@ export class EntryResolver {
       user = await userLoader.load(entry.creatorId);
     }
     return user;
+  }
+
+  @Query(() => [Entry])
+  async searchEntries(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int, { nullable: true }) offset: number,
+    @Arg("searchTerm") searchTerm: string,
+    @Arg("tagFilters", () => [Int], { nullable: true }) tagFilters: number[],
+    @Arg("sortBy", () => SortBy, { nullable: true }) sortBy: SortBy
+  ): Promise<Entry[]> {
+    const realLimit = Math.min(30, limit); // limit to 30 max entries
+    const realLimitPlusOne = realLimit + 1;
+
+    const parameters: any[] = [realLimitPlusOne];
+
+    if (offset) {
+      parameters.push(offset);
+    }
+
+    // https://youtu.be/szfUbzsKvtE
+    // https://stackoverflow.com/a/64450994
+    const formattedQuery = searchTerm.trim().replace(/ /g, " <-> ");
+    const entries = await Entry.createQueryBuilder().select().where(
+      "document_with_weights @@ to_tsquery(:searchTerm)", { searchTerm: `${formattedQuery}:*` }
+    ).orderBy(
+      "ts_rank(document_with_weights, to_tsquery(:searchTerm))",
+      "DESC"
+    ).skip(offset || 0).limit(realLimit).getMany();
+
+    return entries;
   }
 
   @Mutation(() => Entry, { nullable: true })

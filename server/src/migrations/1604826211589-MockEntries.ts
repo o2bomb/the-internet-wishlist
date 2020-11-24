@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class MockEntries1604826211593 implements MigrationInterface {
+export class MockEntries1604826211595 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
     insert into entry (title, text, "creatorId", "createdAt", "updatedAt") values ('Speech Pathologist', 'Phasellus sit amet erat. Nulla tempus. Vivamus in felis eu sapien cursus vestibulum.
