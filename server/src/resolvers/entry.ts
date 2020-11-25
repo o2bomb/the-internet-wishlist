@@ -105,6 +105,10 @@ export class EntryResolver {
       parameters.push(offset);
     }
 
+    if (!searchTerm) {
+      return [];
+    }
+
     // https://youtu.be/szfUbzsKvtE
     // https://stackoverflow.com/a/64450994
     const formattedQuery = searchTerm.trim().replace(/ /g, " <-> ");
