@@ -1,5 +1,45 @@
 # The Internet Wishlist
-A suggestion box for the future of technology
+Inspired by https://twitter.com/theiwl?lang=en
+
+Live demo coming soon!
+
+## Technology stack
+Front end:
+- TypeScript
+- [React](https://reactjs.org/)
+- [Next](https://nextjs.org/)
+- [Apollo Client](https://github.com/apollographql/apollo-client) (GraphQL client)
+- [ChakraUI](https://chakra-ui.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+
+Back end:
+- TypeScript
+- [Express](https://expressjs.com/)
+- [Apollo Server](https://github.com/apollographql/apollo-server) (GraphQL server)
+- [TypeGraphQL](https://typegraphql.com/) (GraphQL schema framework)
+- [TypeORM](https://typeorm.io/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Redis](https://redis.io/)
+
+
+## How to run the project
+Installation prerequisites:
+- [PostgreSQL](https://www.postgresql.org/)
+- [Redis](https://redis.io/)
+
+1. Clone the repo to your local machine
+2. `sudo service postgresql start` to start the PostgreSQL server
+3. `sudo -u postgres createdb tiw` to create a new database called "tiw"
+4. In the `server` directory:
+    1. `yarn install` to install all required libraries
+    2. `yarn watch` to run the TypeScript compiler
+    3. In a new terminal, `yarn dev` to start the server
+    - Check that the GraphQL server is running correctly on http://localhost:4000/graphql
+5. In the `client` directory:
+    1. `yarn install` to install all required libraries
+    2. In a new terminal, `yarn dev` to start the server
+    - Check that the client is running correctly on http://localhost:3000
+
 
 ## Things I learned from this project
 - In order for a `<a>` element to be able to be focused on (tabbable) it needs to have the `href` attribute set
