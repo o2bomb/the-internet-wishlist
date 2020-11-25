@@ -26,6 +26,7 @@ Back end:
 Installation prerequisites:
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
+- Yarn or npm
 
 1. Clone the repo to your local machine
 2. `sudo service postgresql start` to start the PostgreSQL server
