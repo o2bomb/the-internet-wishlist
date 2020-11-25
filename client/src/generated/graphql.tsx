@@ -13,12 +13,22 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  hello: Scalars['String'];
+  searchEntries: Array<Entry>;
   entry?: Maybe<Entry>;
   entries: PaginatedEntries;
-  me?: Maybe<User>;
+  hello: Scalars['String'];
   tag?: Maybe<Tag>;
   tags: Array<Tag>;
+  me?: Maybe<User>;
+};
+
+
+export type QuerySearchEntriesArgs = {
+  sortBy?: Maybe<SortBy>;
+  tagFilters?: Maybe<Array<Scalars['Int']>>;
+  searchTerm: Scalars['String'];
+  offset?: Maybe<Scalars['Int']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -70,6 +80,14 @@ export type Tag = {
   createdAt: Scalars['String'];
 };
 
+/** Options to sort search results */
+export enum SortBy {
+  Newest = 'NEWEST',
+  Oldest = 'OLDEST',
+  MostHearts = 'MOST_HEARTS',
+  LeastHearts = 'LEAST_HEARTS'
+}
+
 export type PaginatedEntries = {
   __typename?: 'PaginatedEntries';
   entries: Array<Entry>;
@@ -84,10 +102,10 @@ export type Mutation = {
   createEntry: EntryResponse;
   updateEntry?: Maybe<Entry>;
   deleteEntry: Scalars['Boolean'];
+  createTag: TagResponse;
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
-  createTag: TagResponse;
 };
 
 
@@ -120,6 +138,11 @@ export type MutationDeleteEntryArgs = {
 };
 
 
+export type MutationCreateTagArgs = {
+  name: Scalars['String'];
+};
+
+
 export type MutationRegisterArgs = {
   options: UsernamePasswordInput;
 };
@@ -128,11 +151,6 @@ export type MutationRegisterArgs = {
 export type MutationLoginArgs = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
-};
-
-
-export type MutationCreateTagArgs = {
-  name: Scalars['String'];
 };
 
 export type EntryResponse = {
@@ -147,6 +165,12 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type TagResponse = {
+  __typename?: 'TagResponse';
+  errors?: Maybe<Array<FieldError>>;
+  tag?: Maybe<Tag>;
+};
+
 export type UserResponse = {
   __typename?: 'UserResponse';
   errors?: Maybe<Array<FieldError>>;
@@ -157,12 +181,6 @@ export type UsernamePasswordInput = {
   username: Scalars['String'];
   email: Scalars['String'];
   password: Scalars['String'];
-};
-
-export type TagResponse = {
-  __typename?: 'TagResponse';
-  errors?: Maybe<Array<FieldError>>;
-  tag?: Maybe<Tag>;
 };
 
 export type PartialTagFragment = (
@@ -407,6 +425,23 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & RegularUserFragment
+  )> }
+);
+
+export type SearchEntriesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  offset?: Maybe<Scalars['Int']>;
+  searchTerm: Scalars['String'];
+  tagFilters?: Maybe<Array<Scalars['Int']>>;
+  sortBy?: Maybe<SortBy>;
+}>;
+
+
+export type SearchEntriesQuery = (
+  { __typename?: 'Query' }
+  & { searchEntries: Array<(
+    { __typename?: 'Entry' }
+    & RegularEntryFragment
   )> }
 );
 
@@ -946,3 +981,46 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const SearchEntriesDocument = gql`
+    query SearchEntries($limit: Int!, $offset: Int, $searchTerm: String!, $tagFilters: [Int!], $sortBy: SortBy) {
+  searchEntries(
+    limit: $limit
+    offset: $offset
+    searchTerm: $searchTerm
+    tagFilters: $tagFilters
+    sortBy: $sortBy
+  ) {
+    ...RegularEntry
+  }
+}
+    ${RegularEntryFragmentDoc}`;
+
+/**
+ * __useSearchEntriesQuery__
+ *
+ * To run a query within a React component, call `useSearchEntriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchEntriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSearchEntriesQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      offset: // value for 'offset'
+ *      searchTerm: // value for 'searchTerm'
+ *      tagFilters: // value for 'tagFilters'
+ *      sortBy: // value for 'sortBy'
+ *   },
+ * });
+ */
+export function useSearchEntriesQuery(baseOptions: Apollo.QueryHookOptions<SearchEntriesQuery, SearchEntriesQueryVariables>) {
+        return Apollo.useQuery<SearchEntriesQuery, SearchEntriesQueryVariables>(SearchEntriesDocument, baseOptions);
+      }
+export function useSearchEntriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchEntriesQuery, SearchEntriesQueryVariables>) {
+          return Apollo.useLazyQuery<SearchEntriesQuery, SearchEntriesQueryVariables>(SearchEntriesDocument, baseOptions);
+        }
+export type SearchEntriesQueryHookResult = ReturnType<typeof useSearchEntriesQuery>;
+export type SearchEntriesLazyQueryHookResult = ReturnType<typeof useSearchEntriesLazyQuery>;
+export type SearchEntriesQueryResult = Apollo.QueryResult<SearchEntriesQuery, SearchEntriesQueryVariables>;

@@ -11,7 +11,7 @@ import {
   MenuButton,
   MenuDivider,
   MenuItem,
-  MenuList,
+  MenuList
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
@@ -22,11 +22,12 @@ import { useViewport } from "../utils/ViewportProvider";
 import { DarkModeSwitch } from "./DarkModeSwitch";
 import { SearchInput } from "./SearchInput";
 
-interface NavBarProps {
+export interface NavBarProps {
   navigation?: boolean;
+  searchInput?: React.ReactElement;
 }
 
-export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
+export const NavBar: React.FC<NavBarProps> = ({ navigation = false, searchInput }) => {
   const viewportValues = useViewport();
   const apolloClient = useApolloClient();
   const [logout] = useLogoutMutation();
@@ -77,6 +78,8 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
     );
   }
 
+  const SearchInputComponent = searchInput || <SearchInput />
+
   return (
     <Flex padding={4} align="center">
       <NextLink href="/" passHref>
@@ -86,7 +89,7 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false }) => {
           </Heading>
         </Link>
       </NextLink>
-      {navigation ? <SearchInput /> : null}
+      {navigation ? SearchInputComponent : null}
       <Box flex={1} mr={4} />
       <Box mr={4}>
         <DarkModeSwitch />

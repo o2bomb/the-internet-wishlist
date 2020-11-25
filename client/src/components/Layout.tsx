@@ -1,12 +1,11 @@
 import React from "react";
 import { Box } from "@chakra-ui/react";
-import { NavBar } from "./NavBar";
-import { motion } from "framer-motion";
+import { NavBar, NavBarProps } from "./NavBar";
+import { FadeInTransition } from "./FadeInTransition";
 
 type LayoutVariant = "small" | "regular" | "large";
 
-interface LayoutProps {
-  navigation?: boolean;
+interface LayoutProps extends NavBarProps {
   variant?: LayoutVariant;
 }
 
@@ -14,6 +13,7 @@ export const Layout: React.FC<LayoutProps> = ({
   children,
   variant,
   navigation,
+  searchInput,
 }) => {
   let maxWidth;
   switch (variant) {
@@ -29,26 +29,12 @@ export const Layout: React.FC<LayoutProps> = ({
 
   return (
     <Box>
-      <NavBar navigation={navigation} />
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: {
-            opacity: 0,
-          },
-          visible: {
-            opacity: 1,
-            transition: {
-              delay: 0.2,
-            },
-          },
-        }}
-      >
+      <NavBar navigation={navigation} searchInput={searchInput} />
+      <FadeInTransition>
         <Box marginX="auto" paddingX={4} maxW={maxWidth}>
           {children}
         </Box>
-      </motion.div>
+      </FadeInTransition>
     </Box>
   );
 };

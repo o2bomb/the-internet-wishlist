@@ -26,6 +26,9 @@ const client = new ApolloClient({
               };
             },
           },
+          searchEntries: {
+            keyArgs: ["searchTerm"]
+          }
         },
       },
     },
