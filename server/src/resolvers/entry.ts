@@ -61,13 +61,8 @@ class PaginatedEntries {
 @Resolver(Entry)
 export class EntryResolver {
   @FieldResolver(() => [Tag])
-  async tags(@Root() entry: Entry): Promise<Tag[]> {
-    const entryTags = await EntryTag.find({
-      where: {
-        entryId: entry.id,
-      },
-      relations: ["tag"],
-    });
+  async tags(@Root() entry: Entry, @Ctx() { entryTagLoader }: MyContext): Promise<Tag[]> {
+    const entryTags = await entryTagLoader.load(entry.id) || [];
 
     return entryTags.map((et) => et.tag);
   }

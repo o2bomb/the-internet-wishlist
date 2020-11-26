@@ -19,6 +19,7 @@ import { TagResolver } from "./resolvers/tag";
 import { UserResolver } from "./resolvers/user";
 import { createHeartLoader } from "./utils/createHeartLoader";
 import { createUserLoader } from "./utils/createUserLoader";
+import { createEntryTagLoader } from "./utils/createEntryTagLoader";
 
 const main = async () => {
   const conn = await createConnection({
@@ -80,6 +81,7 @@ const main = async () => {
       redis,
       userLoader: createUserLoader(),
       heartLoader: createHeartLoader(),
+      entryTagLoader: createEntryTagLoader(),
     }),
   });
   apolloServer.applyMiddleware({ app, cors: corsOptions });
