@@ -1,4 +1,4 @@
-import { Box, Stack } from "@chakra-ui/react";
+import { Box, Heading, Stack } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { EntryCard } from "../components/EntryCard";
 import { EntryList } from "../components/EntryList";
@@ -20,7 +20,7 @@ const Index = () => {
             limit: 30,
             searchTerm: val,
           },
-        })
+        });
       }}
       onSearchInputKeyDown={(e) => {
         if (e.key === "Enter" || e.keyCode === 13) {
@@ -42,7 +42,7 @@ const Index = () => {
       }}
     />
   );
-  
+
   const searchFunction = debounce((val: string) => {
     searchEntries({
       variables: {
@@ -50,8 +50,7 @@ const Index = () => {
         searchTerm: val,
       },
     });
-    console.log("A SEARCH WAS PERFORMED: ", val);
-  }, 2500);
+  }, 1000);
 
   const searchResults = () => {
     if (!data && loading) {
@@ -64,13 +63,16 @@ const Index = () => {
     }
 
     return (
-      <Stack spacing={4}>
-        {data?.searchEntries.map((e, index) => (
-          <Box key={index}>
-            <EntryCard entry={e} />
-          </Box>
-        ))}
-      </Stack>
+      <>
+        <Heading as="h2" size="2xl" mb={4}>Search results for: {data?.searchEntries.searchTerm}</Heading>
+        <Stack spacing={4}>
+          {data?.searchEntries.entries.map((e, index) => (
+            <Box key={index}>
+              <EntryCard entry={e} />
+            </Box>
+          ))}
+        </Stack>
+      </>
     );
   };
 

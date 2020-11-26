@@ -29,7 +29,15 @@ export enum SortBy {
   NEWEST = "NEWEST",
   OLDEST = "OLDEST",
   MOST_HEARTS = "MOST_HEARTS",
-  LEAST_HEARTS = "LEAST_HEARTS"
+  LEAST_HEARTS = "LEAST_HEARTS",
+}
+
+@ObjectType()
+class SearchedEntries {
+  @Field(() => [Entry])
+  entries: Entry[];
+  @Field()
+  searchTerm: string;
 }
 
 @ObjectType()
@@ -88,38 +96,43 @@ export class EntryResolver {
     return user;
   }
 
-  @Query(() => [Entry])
+  @Query(() => SearchedEntries)
   async searchEntries(
     @Arg("limit", () => Int) limit: number,
     @Arg("offset", () => Int, { nullable: true }) offset: number,
     @Arg("searchTerm") searchTerm: string,
     @Arg("tagFilters", () => [Int], { nullable: true }) _: number[],
     @Arg("sortBy", () => SortBy, { nullable: true }) __: SortBy
-  ): Promise<Entry[]> {
+  ): Promise<SearchedEntries> {
     const realLimit = Math.min(30, limit); // limit to 30 max entries
-    const realLimitPlusOne = realLimit + 1;
-
-    const parameters: any[] = [realLimitPlusOne];
-
-    if (offset) {
-      parameters.push(offset);
-    }
 
     if (!searchTerm) {
-      return [];
+      return {
+        entries: [],
+        searchTerm,
+      };
     }
 
     // https://youtu.be/szfUbzsKvtE
     // https://stackoverflow.com/a/64450994
     const formattedQuery = searchTerm.trim().replace(/ /g, " <-> ");
-    const entries = await Entry.createQueryBuilder().select().where(
-      "document_with_weights @@ to_tsquery(:searchTerm)", { searchTerm: `${formattedQuery}:*` }
-    ).orderBy(
-      "ts_rank(document_with_weights, to_tsquery(:searchTerm))",
-      "DESC"
-    ).skip(offset || 0).limit(realLimit).getMany();
+    const entries = await Entry.createQueryBuilder()
+      .select()
+      .where("document_with_weights @@ to_tsquery(:searchTerm)", {
+        searchTerm: `${formattedQuery}:*`,
+      })
+      .orderBy(
+        "ts_rank(document_with_weights, to_tsquery(:searchTerm))",
+        "DESC"
+      )
+      .skip(offset || 0)
+      .limit(realLimit)
+      .getMany();
 
-    return entries;
+    return {
+      entries,
+      searchTerm,
+    };
   }
 
   @Mutation(() => Entry, { nullable: true })

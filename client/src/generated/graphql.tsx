@@ -13,7 +13,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  searchEntries: Array<Entry>;
+  searchEntries: SearchedEntries;
   entry?: Maybe<Entry>;
   entries: PaginatedEntries;
   hello: Scalars['String'];
@@ -45,6 +45,12 @@ export type QueryEntriesArgs = {
 
 export type QueryTagArgs = {
   id: Scalars['Int'];
+};
+
+export type SearchedEntries = {
+  __typename?: 'SearchedEntries';
+  entries: Array<Entry>;
+  searchTerm: Scalars['String'];
 };
 
 export type Entry = {
@@ -439,10 +445,14 @@ export type SearchEntriesQueryVariables = Exact<{
 
 export type SearchEntriesQuery = (
   { __typename?: 'Query' }
-  & { searchEntries: Array<(
-    { __typename?: 'Entry' }
-    & RegularEntryFragment
-  )> }
+  & { searchEntries: (
+    { __typename?: 'SearchedEntries' }
+    & Pick<SearchedEntries, 'searchTerm'>
+    & { entries: Array<(
+      { __typename?: 'Entry' }
+      & RegularEntryFragment
+    )> }
+  ) }
 );
 
 export const RegularUserFragmentDoc = gql`
@@ -990,7 +1000,10 @@ export const SearchEntriesDocument = gql`
     tagFilters: $tagFilters
     sortBy: $sortBy
   ) {
-    ...RegularEntry
+    entries {
+      ...RegularEntry
+    }
+    searchTerm
   }
 }
     ${RegularEntryFragmentDoc}`;

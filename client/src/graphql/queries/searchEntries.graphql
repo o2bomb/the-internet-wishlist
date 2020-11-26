@@ -1,5 +1,8 @@
 query SearchEntries ($limit: Int!, $offset: Int, $searchTerm: String!, $tagFilters: [Int!], $sortBy: SortBy) {
     searchEntries(limit: $limit, offset: $offset, searchTerm: $searchTerm, tagFilters: $tagFilters, sortBy: $sortBy) {
-        ...RegularEntry
+        entries {
+            ...RegularEntry
+        }
+        searchTerm
     }
 }
