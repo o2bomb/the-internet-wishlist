@@ -6,8 +6,8 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
+
+  PrimaryGeneratedColumn
 } from "typeorm";
 import { EntryTag } from "./EntryTag";
 import { User } from "./User";

@@ -93,8 +93,8 @@ export class EntryResolver {
     @Arg("limit", () => Int) limit: number,
     @Arg("offset", () => Int, { nullable: true }) offset: number,
     @Arg("searchTerm") searchTerm: string,
-    @Arg("tagFilters", () => [Int], { nullable: true }) tagFilters: number[],
-    @Arg("sortBy", () => SortBy, { nullable: true }) sortBy: SortBy
+    @Arg("tagFilters", () => [Int], { nullable: true }) _: number[],
+    @Arg("sortBy", () => SortBy, { nullable: true }) __: SortBy
   ): Promise<Entry[]> {
     const realLimit = Math.min(30, limit); // limit to 30 max entries
     const realLimitPlusOne = realLimit + 1;
