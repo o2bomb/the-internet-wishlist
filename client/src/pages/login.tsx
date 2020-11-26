@@ -1,6 +1,6 @@
 import React from "react";
 import NextLink from "next/link";
-import { gql } from "@apollo/client";
+import { gql, useApolloClient } from "@apollo/client";
 import { Button, Flex, Link, Stack } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/router";
@@ -11,6 +11,7 @@ import { toErrorMap } from "../utils/toErrorMap";
 
 const Login: React.FC<{}> = ({}) => {
   const router = useRouter();
+  const apolloClient = useApolloClient();
   const [login] = useLoginMutation({
     update: (cache, { data }) => {
       const newMe = data?.login.user;
@@ -51,6 +52,7 @@ const Login: React.FC<{}> = ({}) => {
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data?.login.errors));
           } else if (response.data?.login.user) {
+            await apolloClient.resetStore(); // reset cache
             router.push("/");
           }
         }}
