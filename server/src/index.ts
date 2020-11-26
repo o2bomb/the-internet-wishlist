@@ -1,4 +1,5 @@
 import { ApolloServer } from "apollo-server-express";
+import "dotenv-safe/config";
 import connectRedis from "connect-redis";
 import express from "express";
 import session from "express-session";
@@ -22,9 +23,7 @@ import { createUserLoader } from "./utils/createUserLoader";
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
-    database: "tiw", // database_name corresponds to the name of PostgreSQL db
-    username: "postgres",
-    port: 5433,
+    url: process.env.DATABASE_URL,
     logging: true,
     synchronize: true, // makes sure entities are synced with database
     entities: [Entry, User, Heart, Tag, EntryTag],
@@ -40,12 +39,12 @@ const main = async () => {
   const app = express();
   
   const corsOptions = {
-    origin: "http://localhost:3000",
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
   };
   // app.use(cors(corsOptions));
   const RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redis = new Redis(process.env.REDIS_URL);
   app.use(
     session({
       name: COOKIE_NAME,
@@ -60,7 +59,7 @@ const main = async () => {
         secure: __prod__, // cookie only works in https (in prod)
       },
       saveUninitialized: false,
-      secret: "change this so something else, can be anything",
+      secret: process.env.SESSION_SECRET,
       resave: false,
     })
   );
@@ -85,8 +84,8 @@ const main = async () => {
   });
   apolloServer.applyMiddleware({ app, cors: corsOptions });
 
-  app.listen(4000, () => {
-    console.log("Express server started on localhost:4000");
+  app.listen(parseInt(process.env.PORT), () => {
+    console.log("Express server started on port", process.env.PORT);
   });
 };
 
