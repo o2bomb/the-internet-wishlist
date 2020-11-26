@@ -7,6 +7,7 @@ import { InputField } from "../../../components/InputField";
 import { Layout } from "../../../components/Layout";
 import {
   useGetEntryQuery,
+  useMeQuery,
   useUpdateEntryMutation
 } from "../../../generated/graphql";
 import { getIdFromUrl } from "../../../utils/getIdFromUrl";
@@ -15,6 +16,7 @@ export const EditEntry = ({}) => {
   const router = useRouter();
   const intId = getIdFromUrl();
   const toast = useToast();
+  const { data: meData, loading: meLoading } = useMeQuery();
   const { data, loading } = useGetEntryQuery({
     skip: intId === -1,
     variables: {
@@ -23,8 +25,13 @@ export const EditEntry = ({}) => {
   });
   const [updateEntry] = useUpdateEntryMutation();
 
-  if (loading) {
+  
+  if (loading || meLoading) {
     return <Layout>Loading...</Layout>;
+  }
+
+  if (meData?.me?.id !== data?.entry?.creatorId) {
+    return <Layout>You are not allowed to edit this post</Layout>
   }
 
   if (!data?.entry) {
