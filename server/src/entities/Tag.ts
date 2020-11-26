@@ -19,7 +19,7 @@ export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column({ nullable: true })
   creatorId: number;
 
   @Field({ nullable: true })
