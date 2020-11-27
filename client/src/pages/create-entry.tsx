@@ -1,16 +1,18 @@
+import React, { useState } from "react";
 import { gql } from "@apollo/client";
-import { Button, Stack } from "@chakra-ui/react";
+import { Box, Button, Stack } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import React from "react";
 import { InputField } from "../components/InputField";
 import { Layout } from "../components/Layout";
-import { PaginatedEntries, useCreateEntryMutation } from "../generated/graphql";
+import ReCAPTCHA from "react-google-recaptcha";
+import { PaginatedEntries, useCreateEntryMutation, useVerifyCaptchaLazyQuery } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 
 interface CreateEntryProps {}
 
 const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
+  const [verifyCaptcha, { data, loading }] = useVerifyCaptchaLazyQuery();
   const router = useRouter();
   const [createEntry] = useCreateEntryMutation({
     update: (cache, { data }) => {
@@ -75,12 +77,25 @@ const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
               <InputField name="title" label="Title" placeholder="I wish..." />
               <InputField name="text" label="Description" textArea={true} />
             </Stack>
-            <Button isLoading={isSubmitting} type="submit">
+            <Button mr={4} isLoading={isSubmitting} type="submit" disabled={!data?.verifyCaptcha}>
               Create entry
             </Button>
+            {!data?.verifyCaptcha ? "Please complete the captcha" : null}
           </Form>
         )}
       </Formik>
+      <Box mt={4}>
+        <ReCAPTCHA
+          sitekey="6Leez-8ZAAAAADyxk1s2SDDxoxuKWBUIBhb2XgNY"
+          onChange={(value: any) => {
+            verifyCaptcha({
+              variables: {
+                token: value,
+              }
+            });
+          }}
+        />
+      </Box>
     </Layout>
   );
 };

@@ -1,0 +1,3 @@
+query verifyCaptcha ($token: String!) {
+  verifyCaptcha(token: $token)
+}

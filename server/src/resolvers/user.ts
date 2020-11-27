@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import argon2 from "argon2";
 import {
   Arg,
@@ -44,6 +45,20 @@ export class UserResolver {
       return user.email;
     }
     return "";
+  }
+
+  @Query(() => Boolean)
+  async verifyCaptcha(@Arg("token") token: string) {
+    const parameters = new URLSearchParams();
+    parameters.append("secret", process.env.GOOGLE_CAPTCHA_SECRET_KEY);
+    parameters.append("response", token);
+
+    const json = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "post",
+      body: parameters as any,
+    }).then(res => res.json());
+
+    return json.success;
   }
 
   @Query(() => User, { nullable: true })

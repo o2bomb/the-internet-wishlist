@@ -19,6 +19,7 @@ export type Query = {
   hello: Scalars['String'];
   tag?: Maybe<Tag>;
   tags: Array<Tag>;
+  verifyCaptcha: Scalars['Boolean'];
   me?: Maybe<User>;
 };
 
@@ -45,6 +46,11 @@ export type QueryEntriesArgs = {
 
 export type QueryTagArgs = {
   id: Scalars['Int'];
+};
+
+
+export type QueryVerifyCaptchaArgs = {
+  token: Scalars['String'];
 };
 
 export type SearchedEntries = {
@@ -453,6 +459,16 @@ export type SearchEntriesQuery = (
       & RegularEntryFragment
     )> }
   ) }
+);
+
+export type VerifyCaptchaQueryVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type VerifyCaptchaQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'verifyCaptcha'>
 );
 
 export const RegularUserFragmentDoc = gql`
@@ -1037,3 +1053,34 @@ export function useSearchEntriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type SearchEntriesQueryHookResult = ReturnType<typeof useSearchEntriesQuery>;
 export type SearchEntriesLazyQueryHookResult = ReturnType<typeof useSearchEntriesLazyQuery>;
 export type SearchEntriesQueryResult = Apollo.QueryResult<SearchEntriesQuery, SearchEntriesQueryVariables>;
+export const VerifyCaptchaDocument = gql`
+    query verifyCaptcha($token: String!) {
+  verifyCaptcha(token: $token)
+}
+    `;
+
+/**
+ * __useVerifyCaptchaQuery__
+ *
+ * To run a query within a React component, call `useVerifyCaptchaQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVerifyCaptchaQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVerifyCaptchaQuery({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useVerifyCaptchaQuery(baseOptions: Apollo.QueryHookOptions<VerifyCaptchaQuery, VerifyCaptchaQueryVariables>) {
+        return Apollo.useQuery<VerifyCaptchaQuery, VerifyCaptchaQueryVariables>(VerifyCaptchaDocument, baseOptions);
+      }
+export function useVerifyCaptchaLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VerifyCaptchaQuery, VerifyCaptchaQueryVariables>) {
+          return Apollo.useLazyQuery<VerifyCaptchaQuery, VerifyCaptchaQueryVariables>(VerifyCaptchaDocument, baseOptions);
+        }
+export type VerifyCaptchaQueryHookResult = ReturnType<typeof useVerifyCaptchaQuery>;
+export type VerifyCaptchaLazyQueryHookResult = ReturnType<typeof useVerifyCaptchaLazyQuery>;
+export type VerifyCaptchaQueryResult = Apollo.QueryResult<VerifyCaptchaQuery, VerifyCaptchaQueryVariables>;
