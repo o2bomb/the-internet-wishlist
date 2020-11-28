@@ -48,3 +48,4 @@ Installation prerequisites:
 - To add a margin-top to only wrapped items within a flexbox, set the margin-top of the container to a negative value equal to the margin-top of the items within the flexbox (see [here](https://stackoverflow.com/a/30891910))
 - Using the cors library is not necessary for setting headers on the server. Can be done through Apollo Server options directly (sometimes the cors library stuffs up the cookie setting header as well for some reason)
 - The [nullish coalescing operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator) (`??`) is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined
+- create-react-app and Next have different ways of exposing environment variables. In Next, browser-side vars are exposed by prefixing them with `NEXT_PUBLIC_` (see [here](https://nextjs.org/docs/basic-features/environment-variables))
