@@ -1,15 +1,20 @@
 import { gql } from "@apollo/client";
-import { Button, Stack } from "@chakra-ui/react";
+import { Box, Button, Stack, Text } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import React from "react";
 import { InputField } from "../components/InputField";
 import { Layout } from "../components/Layout";
-import { useRegisterMutation } from "../generated/graphql";
+import { ReCAPTCHA } from "../components/ReCAPTCHA";
+import {
+  useRegisterMutation,
+  useVerifyCaptchaLazyQuery,
+} from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 
 const Register: React.FC<{}> = ({}) => {
   const router = useRouter();
+  const [verifyCaptcha, { data, refetch }] = useVerifyCaptchaLazyQuery();
   const [register] = useRegisterMutation({
     update: (cache, { data }) => {
       const newMe = data?.register.user;
@@ -62,12 +67,24 @@ const Register: React.FC<{}> = ({}) => {
               <InputField name="email" label="Email" type="email" />
               <InputField name="password" label="Password" type="password" />
             </Stack>
-            <Button mt={4} isLoading={isSubmitting} type="submit">
-              Create account
-            </Button>
+            <Stack spacing={2} direction="row" align="center">
+              <Button
+                isLoading={isSubmitting}
+                disabled={!data?.verifyCaptcha}
+                type="submit"
+              >
+                Create account
+              </Button>
+              {!data?.verifyCaptcha ? (
+                <Text color="tomato">Please complete the captcha</Text>
+              ) : null}
+            </Stack>
           </Form>
         )}
       </Formik>
+      <Box mt={4}>
+        <ReCAPTCHA verifyCaptcha={verifyCaptcha} refetch={refetch} />
+      </Box>
     </Layout>
   );
 };

@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { gql } from "@apollo/client";
-import { Box, Button, Stack } from "@chakra-ui/react";
+import { Box, Button, Stack, Text } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { InputField } from "../components/InputField";
 import { Layout } from "../components/Layout";
-import ReCAPTCHA from "react-google-recaptcha";
 import { PaginatedEntries, useCreateEntryMutation, useVerifyCaptchaLazyQuery } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
+import { ReCAPTCHA } from "../components/ReCAPTCHA";
 
 interface CreateEntryProps {}
 
 const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
-  const [verifyCaptcha, { data, loading }] = useVerifyCaptchaLazyQuery();
   const router = useRouter();
+  const [verifyCaptcha, { data, refetch }] = useVerifyCaptchaLazyQuery();
   const [createEntry] = useCreateEntryMutation({
     update: (cache, { data }) => {
       const newEntry = data?.createEntry.entry;
@@ -77,24 +77,17 @@ const CreateEntry: React.FC<CreateEntryProps> = ({}) => {
               <InputField name="title" label="Title" placeholder="I wish..." />
               <InputField name="text" label="Description" textArea={true} />
             </Stack>
-            <Button mr={4} isLoading={isSubmitting} type="submit" disabled={!data?.verifyCaptcha}>
-              Create entry
-            </Button>
-            {!data?.verifyCaptcha ? "Please complete the captcha" : null}
+            <Stack spacing={2} direction="row" align="center">
+              <Button isLoading={isSubmitting} type="submit" disabled={!data?.verifyCaptcha}>
+                Create entry
+              </Button>
+              {!data?.verifyCaptcha ? <Text color="tomato">Please complete the captcha</Text> : null}
+            </Stack>
           </Form>
         )}
       </Formik>
       <Box mt={4}>
-        <ReCAPTCHA
-          sitekey="6Leez-8ZAAAAADyxk1s2SDDxoxuKWBUIBhb2XgNY"
-          onChange={(value: any) => {
-            verifyCaptcha({
-              variables: {
-                token: value,
-              }
-            });
-          }}
-        />
+        <ReCAPTCHA verifyCaptcha={verifyCaptcha} refetch={refetch} />
       </Box>
     </Layout>
   );
