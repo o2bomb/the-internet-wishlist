@@ -64,10 +64,19 @@ export class EntryResolver {
   @FieldResolver(() => [Report])
   async reports(
     @Root() entry: Entry,
-    @Ctx() { reportLoader }: MyContext
+    @Ctx() { req, userLoader, reportLoader }: MyContext
   ): Promise<Report[]>{
+    const { userId } = req.session;
+    if (!userId) {
+      return [];
+    }
+
+    const user = await userLoader.load(userId);
+    if (!user.isAdmin) {
+      return [];
+    }
+
     const reports = await reportLoader.load(entry.id) || [];
-    
     return reports;
   }
 
