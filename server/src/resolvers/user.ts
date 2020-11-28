@@ -57,6 +57,8 @@ export class UserResolver {
       method: "post",
       body: parameters as any,
     }).then(res => res.json());
+    console.log("token", token);
+    console.log("isHuman", json.success);
 
     return json.success;
   }

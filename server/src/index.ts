@@ -12,6 +12,7 @@ import { Entry } from "./entities/Entry";
 import { EntryTag } from "./entities/EntryTag";
 import { Heart } from "./entities/Heart";
 import { Tag } from "./entities/Tag";
+import { Report } from "./entities/Report";
 import { User } from "./entities/User";
 import { EntryResolver, SortBy } from "./resolvers/entry";
 import { HelloResolver } from "./resolvers/hello";
@@ -20,6 +21,7 @@ import { UserResolver } from "./resolvers/user";
 import { createHeartLoader } from "./utils/createHeartLoader";
 import { createUserLoader } from "./utils/createUserLoader";
 import { createEntryTagLoader } from "./utils/createEntryTagLoader";
+import { createReportLoader } from "./utils/createReportLoader";
 
 const main = async () => {
   const conn = await createConnection({
@@ -27,18 +29,18 @@ const main = async () => {
     url: process.env.DATABASE_URL,
     logging: true,
     synchronize: true, // makes sure entities are synced with database
-    entities: [Entry, User, Heart, Tag, EntryTag],
+    entities: [Entry, User, Heart, Tag, EntryTag, Report],
     migrations: [path.join(__dirname, "./migrations/*")],
   });
   await conn.runMigrations();
 
   // await Entry.delete({});
   // await User.delete({});
-  // await EntryTag.delete({}); 
-  // await Tag.delete({}); 
+  // await EntryTag.delete({});
+  // await Tag.delete({});
 
   const app = express();
-  
+
   const corsOptions = {
     origin: process.env.CORS_ORIGIN,
     credentials: true,
@@ -67,8 +69,8 @@ const main = async () => {
 
   registerEnumType(SortBy, {
     name: "SortBy",
-    description: "Options to sort search results"
-  })
+    description: "Options to sort search results",
+  });
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
@@ -82,6 +84,7 @@ const main = async () => {
       userLoader: createUserLoader(),
       heartLoader: createHeartLoader(),
       entryTagLoader: createEntryTagLoader(),
+      reportLoader: createReportLoader(),
     }),
   });
   apolloServer.applyMiddleware({ app, cors: corsOptions });

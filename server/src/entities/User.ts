@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Entry } from "./Entry";
 import { Heart } from "./Heart";
+import { Report } from "./Report";
 import { Tag } from "./Tag";
 
 @ObjectType()
@@ -27,6 +28,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Tag, tag => tag.creator)
   tags: Tag[];
+
+  @OneToMany(() => Report, report => report.creator)
+  reports: Report[];
 
   @Field()
   @Column()
@@ -50,4 +54,7 @@ export class User extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ default: false })
+  isAdmin: boolean;
 }

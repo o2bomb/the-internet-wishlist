@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { EntryTag } from "./EntryTag";
 import { Heart } from "./Heart";
+import { Report } from "./Report";
 import { User } from "./User";
 
 @ObjectType()
@@ -34,6 +35,9 @@ export class Entry extends BaseEntity {
   @OneToMany(() => EntryTag, (tag) => tag.entry)
   tags: EntryTag[];
 
+  @OneToMany(() => Report, (report) => report.entry)
+  reports: Report[];
+
   @Field()
   @Column()
   title!: string;
@@ -45,6 +49,10 @@ export class Entry extends BaseEntity {
   @Field()
   @Column({ type: "int", default: 0 })
   points!: number;
+
+  @Field()
+  @Column({ type: "int", default: 0})
+  reportCount!: number;
 
   @Field(() => String)
   @CreateDateColumn()

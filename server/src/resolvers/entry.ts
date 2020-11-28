@@ -17,12 +17,13 @@ import { EntryTag } from "../entities/EntryTag";
 import { Heart } from "../entities/Heart";
 import { User } from "../entities/User";
 import { FieldError } from "./FieldError";
+import { Tag } from "../entities/Tag";
+import { Report } from "../entities/Report";
 import { isAuth } from "../middlewares/isAuth";
 import { MyContext } from "../types";
 import { validateCreateEntry } from "../utils/validateCreateEntry";
 import { validateUpdateEntry } from "../utils/validateUpdateEntry";
 import { isQueryError } from "../utils/isQueryError";
-import { Tag } from "../entities/Tag";
 import { ForbiddenError, UserInputError } from "apollo-server-express";
 
 export enum SortBy {
@@ -60,6 +61,16 @@ class PaginatedEntries {
 
 @Resolver(Entry)
 export class EntryResolver {
+  @FieldResolver(() => [Report])
+  async reports(
+    @Root() entry: Entry,
+    @Ctx() { reportLoader }: MyContext
+  ): Promise<Report[]>{
+    const reports = await reportLoader.load(entry.id) || [];
+    
+    return reports;
+  }
+
   @FieldResolver(() => [Tag])
   async tags(@Root() entry: Entry, @Ctx() { entryTagLoader }: MyContext): Promise<Tag[]> {
     const entryTags = await entryTagLoader.load(entry.id) || [];
@@ -89,6 +100,49 @@ export class EntryResolver {
       user = await userLoader.load(entry.creatorId);
     }
     return user;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async reportEntry(
+    @Arg("id", () => Int) id: number,
+    @Arg("reason", () => String, { nullable: true }) reason: string | undefined,
+    @Ctx() { req }: MyContext
+  ) {
+    const { userId } = req.session;
+    const report = await Report.findOne({
+      where: {
+        creatorId: userId,
+        entryId: id
+      }
+    })
+
+    if (report) {
+      return true;
+    }
+
+    await getConnection().transaction(async (em) => {
+      // Create new report
+      await em
+        .createQueryBuilder()
+        .insert()
+        .into(Report)
+        .values({
+          entryId: id,
+          creatorId: userId,
+          reason
+        })
+        .execute();
+
+      // Update entry's reportCount
+      await em.query(`
+        update entry
+        set "reportCount" = "reportCount" + 1
+        where id = ${id}
+      `);
+    });
+
+    return true;
   }
 
   @Query(() => SearchedEntries)
