@@ -43,7 +43,7 @@ export const ReCAPTCHA: React.FC<ReCAPTCHAProps> = ({
           },
         });
       }}
-      onExpire={refetch}
+      onExpired={refetch}
       theme={colorMode}
     />
   );
