@@ -8,7 +8,7 @@ interface EntryListProps {}
 export const EntryList: React.FC<EntryListProps> = ({}) => {
   const { loading, error, data, fetchMore } = useGetEntriesQuery({
     variables: {
-      limit: 2,
+      limit: 10,
     },
     notifyOnNetworkStatusChange: true, // sets loading to true whenever query is rerun
   });
