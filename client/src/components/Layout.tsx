@@ -34,7 +34,7 @@ export const Layout: React.FC<LayoutProps> = ({
     <Box>
       <NavBar navigation={navigation} searchInput={searchInput} />
       <FadeInTransition>
-        <Box marginX="auto" paddingX={4} maxW={maxWidth}>
+        <Box marginX="auto" padding={4} maxW={maxWidth}>
           {children}
         </Box>
       </FadeInTransition>
