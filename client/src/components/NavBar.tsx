@@ -11,7 +11,7 @@ import {
   MenuButton,
   MenuDivider,
   MenuItem,
-  MenuList
+  MenuList,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
@@ -27,7 +27,10 @@ export interface NavBarProps {
   searchInput?: React.ReactElement;
 }
 
-export const NavBar: React.FC<NavBarProps> = ({ navigation = false, searchInput }) => {
+export const NavBar: React.FC<NavBarProps> = ({
+  navigation = false,
+  searchInput,
+}) => {
   const viewportValues = useViewport();
   const apolloClient = useApolloClient();
   const [logout] = useLogoutMutation();
@@ -61,7 +64,9 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false, searchInput 
               isRound
             />
             <MenuList>
-              <MenuItem>View profile</MenuItem>
+              <NextLink href="/user">
+                <MenuItem>View profile</MenuItem>
+              </NextLink>
               <MenuDivider />
               <MenuItem
                 onClick={async () => {
@@ -78,7 +83,7 @@ export const NavBar: React.FC<NavBarProps> = ({ navigation = false, searchInput 
     );
   }
 
-  const SearchInputComponent = searchInput || <SearchInput />
+  const SearchInputComponent = searchInput || <SearchInput />;
 
   return (
     <Flex padding={4} align="center">

@@ -65,7 +65,7 @@ export class EntryResolver {
   async reports(
     @Root() entry: Entry,
     @Ctx() { req, userLoader, reportLoader }: MyContext
-  ): Promise<Report[]>{
+  ): Promise<Report[]> {
     const { userId } = req.session;
     if (!userId) {
       return [];
@@ -76,13 +76,16 @@ export class EntryResolver {
       return [];
     }
 
-    const reports = await reportLoader.load(entry.id) || [];
+    const reports = (await reportLoader.load(entry.id)) || [];
     return reports;
   }
 
   @FieldResolver(() => [Tag])
-  async tags(@Root() entry: Entry, @Ctx() { entryTagLoader }: MyContext): Promise<Tag[]> {
-    const entryTags = await entryTagLoader.load(entry.id) || [];
+  async tags(
+    @Root() entry: Entry,
+    @Ctx() { entryTagLoader }: MyContext
+  ): Promise<Tag[]> {
+    const entryTags = (await entryTagLoader.load(entry.id)) || [];
 
     return entryTags.map((et) => et.tag);
   }
@@ -111,6 +114,19 @@ export class EntryResolver {
     return user;
   }
 
+  @Query(() => [Entry])
+  @UseMiddleware(isAuth)
+  async heartedEntries(@Ctx() { req }: MyContext) {
+    const hearts = await Heart.find({
+      where: {
+        creatorId: req.session.userId,
+      },
+      relations: ["entry"],
+    });
+
+    return hearts ? hearts.map(h => h.entry) : []; 
+  }
+
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async reportEntry(
@@ -122,9 +138,9 @@ export class EntryResolver {
     const report = await Report.findOne({
       where: {
         creatorId: userId,
-        entryId: id
-      }
-    })
+        entryId: id,
+      },
+    });
 
     if (report) {
       return true;
@@ -139,7 +155,7 @@ export class EntryResolver {
         .values({
           entryId: id,
           creatorId: userId,
-          reason
+          reason,
         })
         .execute();
 

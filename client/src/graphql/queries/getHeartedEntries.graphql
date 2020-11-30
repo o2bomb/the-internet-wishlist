@@ -1,0 +1,5 @@
+query GetHeartedEntries {
+    heartedEntries {
+        ...RegularEntry
+    }
+}

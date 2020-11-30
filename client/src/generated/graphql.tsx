@@ -13,6 +13,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  heartedEntries: Array<Entry>;
   searchEntries: SearchedEntries;
   entry?: Maybe<Entry>;
   entries: PaginatedEntries;
@@ -53,12 +54,6 @@ export type QueryVerifyCaptchaArgs = {
   token: Scalars['String'];
 };
 
-export type SearchedEntries = {
-  __typename?: 'SearchedEntries';
-  entries: Array<Entry>;
-  searchTerm: Scalars['String'];
-};
-
 export type Entry = {
   __typename?: 'Entry';
   id: Scalars['Float'];
@@ -67,8 +62,10 @@ export type Entry = {
   title: Scalars['String'];
   text?: Maybe<Scalars['String']>;
   points: Scalars['Float'];
+  reportCount: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  reports: Array<Report>;
   tags: Array<Tag>;
   isHearted: Scalars['Boolean'];
 };
@@ -83,6 +80,11 @@ export type User = {
   updatedAt: Scalars['String'];
 };
 
+export type Report = {
+  __typename?: 'Report';
+  reason?: Maybe<Scalars['String']>;
+};
+
 export type Tag = {
   __typename?: 'Tag';
   id: Scalars['Float'];
@@ -90,6 +92,12 @@ export type Tag = {
   displayName: Scalars['String'];
   name: Scalars['String'];
   createdAt: Scalars['String'];
+};
+
+export type SearchedEntries = {
+  __typename?: 'SearchedEntries';
+  entries: Array<Entry>;
+  searchTerm: Scalars['String'];
 };
 
 /** Options to sort search results */
@@ -109,6 +117,7 @@ export type PaginatedEntries = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  reportEntry: Scalars['Boolean'];
   tagEntry?: Maybe<Entry>;
   heartEntry?: Maybe<Entry>;
   createEntry: EntryResponse;
@@ -118,6 +127,12 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+};
+
+
+export type MutationReportEntryArgs = {
+  reason?: Maybe<Scalars['String']>;
+  id: Scalars['Int'];
 };
 
 
@@ -400,6 +415,17 @@ export type GetEntryQueryVariables = Exact<{
 export type GetEntryQuery = (
   { __typename?: 'Query' }
   & { entry?: Maybe<(
+    { __typename?: 'Entry' }
+    & RegularEntryFragment
+  )> }
+);
+
+export type GetHeartedEntriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetHeartedEntriesQuery = (
+  { __typename?: 'Query' }
+  & { heartedEntries: Array<(
     { __typename?: 'Entry' }
     & RegularEntryFragment
   )> }
@@ -910,6 +936,38 @@ export function useGetEntryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetEntryQueryHookResult = ReturnType<typeof useGetEntryQuery>;
 export type GetEntryLazyQueryHookResult = ReturnType<typeof useGetEntryLazyQuery>;
 export type GetEntryQueryResult = Apollo.QueryResult<GetEntryQuery, GetEntryQueryVariables>;
+export const GetHeartedEntriesDocument = gql`
+    query GetHeartedEntries {
+  heartedEntries {
+    ...RegularEntry
+  }
+}
+    ${RegularEntryFragmentDoc}`;
+
+/**
+ * __useGetHeartedEntriesQuery__
+ *
+ * To run a query within a React component, call `useGetHeartedEntriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetHeartedEntriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetHeartedEntriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetHeartedEntriesQuery(baseOptions?: Apollo.QueryHookOptions<GetHeartedEntriesQuery, GetHeartedEntriesQueryVariables>) {
+        return Apollo.useQuery<GetHeartedEntriesQuery, GetHeartedEntriesQueryVariables>(GetHeartedEntriesDocument, baseOptions);
+      }
+export function useGetHeartedEntriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetHeartedEntriesQuery, GetHeartedEntriesQueryVariables>) {
+          return Apollo.useLazyQuery<GetHeartedEntriesQuery, GetHeartedEntriesQueryVariables>(GetHeartedEntriesDocument, baseOptions);
+        }
+export type GetHeartedEntriesQueryHookResult = ReturnType<typeof useGetHeartedEntriesQuery>;
+export type GetHeartedEntriesLazyQueryHookResult = ReturnType<typeof useGetHeartedEntriesLazyQuery>;
+export type GetHeartedEntriesQueryResult = Apollo.QueryResult<GetHeartedEntriesQuery, GetHeartedEntriesQueryVariables>;
 export const GetTagDocument = gql`
     query GetTag($id: Int!) {
   tag(id: $id) {
