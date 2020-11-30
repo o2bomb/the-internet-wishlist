@@ -53,7 +53,11 @@ const Login: React.FC<{}> = ({}) => {
             setErrors(toErrorMap(response.data?.login.errors));
           } else if (response.data?.login.user) {
             await apolloClient.resetStore(); // reset cache
-            router.push("/");
+            if (typeof router.query.next === "string") {
+              router.push(router.query.next); // redirect to page specified by next parameter
+            } else {
+              router.push("/");
+            }
           }
         }}
       >
