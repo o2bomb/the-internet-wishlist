@@ -83,7 +83,7 @@ export const NavBar: React.FC<NavBarProps> = ({
     );
   }
 
-  const SearchInputComponent = searchInput || <SearchInput />;
+  const SearchInputComponent = searchInput;
 
   return (
     <Flex padding={4} align="center">
