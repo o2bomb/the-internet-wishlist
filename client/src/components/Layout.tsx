@@ -17,14 +17,17 @@ export const Layout: React.FC<LayoutProps> = ({
 }) => {
   let maxWidth;
   switch (variant) {
-    case "small":
-      maxWidth = "40rem";
+    case "large":
+      maxWidth = "100%";
       break;
     case "regular":
       maxWidth = "80rem";
       break;
+    case "small":
+      maxWidth = "40rem";
+      break;
     default:
-      maxWidth = "100%";
+      maxWidth = "40rem";
   }
 
   return (
