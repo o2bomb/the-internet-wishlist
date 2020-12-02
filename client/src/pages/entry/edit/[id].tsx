@@ -1,14 +1,16 @@
-import { Button, Flex, Stack, useToast } from "@chakra-ui/react";
+import { Box, Button, Stack, Text, useToast } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import React from "react";
-import { EditEntryTagsModal } from "../../../components/EditEntryTagsModal";
+import React, { useEffect, useState } from "react";
+import { EditEntryTags } from "../../../components/EditEntryTags";
 import { InputField } from "../../../components/InputField";
 import { Layout } from "../../../components/Layout";
 import {
+  PartialTagFragment,
   useGetEntryQuery,
   useMeQuery,
-  useUpdateEntryMutation
+  useTagEntryMutation,
+  useUpdateEntryMutation,
 } from "../../../generated/graphql";
 import { getIdFromUrl } from "../../../utils/getIdFromUrl";
 
@@ -23,15 +25,23 @@ export const EditEntry = ({}) => {
       id: intId,
     },
   });
+  const [tagEntry] = useTagEntryMutation();
   const [updateEntry] = useUpdateEntryMutation();
 
-  
+  const [removableTags, setRemovableTags] = useState<PartialTagFragment[]>([]);
+
+  useEffect(() => {
+    if (data && !loading) {
+      setRemovableTags(data.entry!.tags);
+    }
+  }, [data]);
+
   if (loading || meLoading) {
     return <Layout>Loading...</Layout>;
   }
 
   if (meData?.me?.id !== data?.entry?.creatorId) {
-    return <Layout>You are not allowed to edit this post</Layout>
+    return <Layout>You are not allowed to edit this post</Layout>;
   }
 
   if (!data?.entry) {
@@ -49,11 +59,19 @@ export const EditEntry = ({}) => {
         }}
         onSubmit={async (values, { setErrors }) => {
           let response;
+          let response2;
           try {
             response = await updateEntry({
               variables: {
                 id: intId,
                 text: values.text || "",
+              },
+            });
+
+            response2 = await tagEntry({
+              variables: {
+                id: intId,
+                tagIds: removableTags.map((t) => t.id),
               },
             });
 
@@ -85,13 +103,21 @@ export const EditEntry = ({}) => {
                 disabled
               />
               <InputField name="text" label="Description" textArea={true} />
+              <Box>
+                <Text mb={2}>Tags</Text>
+                <EditEntryTags
+                  tags={removableTags}
+                  handleRemoveTag={(t) => {
+                    setRemovableTags((prev) => {
+                      return [...prev, t];
+                    });
+                  }}
+                />
+              </Box>
             </Stack>
-            <Flex>
-              <Button mr={4} isLoading={isSubmitting} type="submit">
-                Edit entry
-              </Button>
-              <EditEntryTagsModal id={id} tags={tags} />
-            </Flex>
+            <Button mr={4} isLoading={isSubmitting} type="submit">
+              Edit entry
+            </Button>
           </Form>
         )}
       </Formik>
