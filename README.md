@@ -50,3 +50,4 @@ Installation prerequisites:
 - The [nullish coalescing operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator) (`??`) is a logical operator that returns its right-hand side operand when its left-hand side operand is null or undefined
 - create-react-app and Next have different ways of exposing environment variables. In Next, browser-side vars are exposed by prefixing them with `NEXT_PUBLIC_` (see [here](https://nextjs.org/docs/basic-features/environment-variables))
 - In PostgreSQL, in order to select a table named user, the table name has to be encased in double quotation marks. This is because the `user` keyword exists as an alias for `current_user` (see [here](https://dba.stackexchange.com/questions/75551/returning-rows-in-postgresql-with-a-table-called-user))
+- To bind data coming from Apollo Client to React state, use the `useEffect(..., [data])` hook
