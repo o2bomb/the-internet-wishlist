@@ -1,0 +1,3 @@
+mutation ReportEntry ($id: Int!, $reason: String) {
+    reportEntry(id: $id, reason: $reason)
+}

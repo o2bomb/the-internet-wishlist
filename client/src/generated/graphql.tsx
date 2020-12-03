@@ -78,6 +78,7 @@ export type User = {
   email: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  isAdmin: Scalars['Boolean'];
 };
 
 export type Report = {
@@ -243,7 +244,7 @@ export type RegularTagFragment = (
 
 export type RegularUserFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'displayName' | 'username' | 'email'>
+  & Pick<User, 'id' | 'displayName' | 'username' | 'email' | 'isAdmin'>
 );
 
 export type RegularUserResponseFragment = (
@@ -355,6 +356,17 @@ export type RegisterMutation = (
     { __typename?: 'UserResponse' }
     & RegularUserResponseFragment
   ) }
+);
+
+export type ReportEntryMutationVariables = Exact<{
+  id: Scalars['Int'];
+  reason?: Maybe<Scalars['String']>;
+}>;
+
+
+export type ReportEntryMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'reportEntry'>
 );
 
 export type TagEntryMutationVariables = Exact<{
@@ -503,6 +515,7 @@ export const RegularUserFragmentDoc = gql`
   displayName
   username
   email
+  isAdmin
 }
     `;
 export const PartialTagFragmentDoc = gql`
@@ -796,6 +809,37 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const ReportEntryDocument = gql`
+    mutation ReportEntry($id: Int!, $reason: String) {
+  reportEntry(id: $id, reason: $reason)
+}
+    `;
+export type ReportEntryMutationFn = Apollo.MutationFunction<ReportEntryMutation, ReportEntryMutationVariables>;
+
+/**
+ * __useReportEntryMutation__
+ *
+ * To run a mutation, you first call `useReportEntryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReportEntryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reportEntryMutation, { data, loading, error }] = useReportEntryMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      reason: // value for 'reason'
+ *   },
+ * });
+ */
+export function useReportEntryMutation(baseOptions?: Apollo.MutationHookOptions<ReportEntryMutation, ReportEntryMutationVariables>) {
+        return Apollo.useMutation<ReportEntryMutation, ReportEntryMutationVariables>(ReportEntryDocument, baseOptions);
+      }
+export type ReportEntryMutationHookResult = ReturnType<typeof useReportEntryMutation>;
+export type ReportEntryMutationResult = Apollo.MutationResult<ReportEntryMutation>;
+export type ReportEntryMutationOptions = Apollo.BaseMutationOptions<ReportEntryMutation, ReportEntryMutationVariables>;
 export const TagEntryDocument = gql`
     mutation TagEntry($id: Int!, $tagIds: [Int!]!) {
   tagEntry(id: $id, tagIds: $tagIds) {
