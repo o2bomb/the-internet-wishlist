@@ -1,6 +1,6 @@
-import React, { useState } from "react";
 import { SearchIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
   Drawer,
   DrawerBody,
@@ -13,6 +13,7 @@ import {
   InputLeftElement,
   useDisclosure,
 } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { useViewport } from "../utils/ViewportProvider";
 
 export interface SearchInputProps {
@@ -29,6 +30,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   onSearchInputFocus,
   onSearchInputBlur,
   forceSearch,
+  children,
 }) => {
   const viewportValues = useViewport();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -56,31 +58,33 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     );
   };
 
-  if (viewportValues.width < 720) {
-    const MobileSearchDrawer = (
-      <Drawer placement="top" onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay>
-          <DrawerContent>
-            <DrawerHeader>Search for an entry</DrawerHeader>
-            <DrawerBody>
-              <form
-                onSubmit={(e) => {
-                  if (forceSearch) {
-                    forceSearch(value);
-                  }
-                  onClose();
-                  e.preventDefault();
-                }}
-              >
-                {InputStuffs()}
-                <Button mt={4} w="100%" type="submit">Search</Button>
-              </form>
-            </DrawerBody>
-          </DrawerContent>
-        </DrawerOverlay>
-      </Drawer>
-    );
+  const MobileSearchDrawer = (
+    <Drawer placement="top" onClose={onClose} isOpen={isOpen}>
+      <DrawerOverlay>
+        <DrawerContent>
+          <DrawerHeader>Search for an entry</DrawerHeader>
+          <DrawerBody>
+            <form
+              onSubmit={(e) => {
+                if (forceSearch) {
+                  forceSearch(value);
+                }
+                onClose();
+                e.preventDefault();
+              }}
+            >
+              {InputStuffs()}
+              <Button mt={4} w="100%" type="submit">
+                Search
+              </Button>
+            </form>
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerOverlay>
+    </Drawer>
+  );
 
+  if (viewportValues.width < 720) {
     return (
       <>
         <IconButton
@@ -93,5 +97,10 @@ export const SearchInput: React.FC<SearchInputProps> = ({
     );
   }
 
-  return InputStuffs(80);
+  return (
+    <>
+      {InputStuffs(80)}
+      <Box mr={4}>{children}</Box>
+    </>
+  );
 };

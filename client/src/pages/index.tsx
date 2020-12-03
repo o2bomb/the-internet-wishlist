@@ -1,5 +1,6 @@
-import { Box, Heading, Stack } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import { SmallCloseIcon } from "@chakra-ui/icons";
+import { Box, Button, Heading, Stack } from "@chakra-ui/react";
+import React, { useState } from "react";
 import { EntryCard } from "../components/EntryCard";
 import { EntryList } from "../components/EntryList";
 import { Layout } from "../components/Layout";
@@ -40,7 +41,20 @@ const Index = () => {
       onSearchInputFocus={() => {
         setShowSearch(true);
       }}
-    />
+    >
+      {showSearch ? (
+        <Button
+          onClick={() => {
+            setShowSearch(false);
+          }}
+          ml={4}
+          size="sm"
+          rightIcon={<SmallCloseIcon />}
+        >
+          Clear search
+        </Button>
+      ) : null}
+    </SearchInput>
   );
 
   const searchFunction = debounce((val: string) => {
@@ -64,7 +78,9 @@ const Index = () => {
 
     return (
       <>
-        <Heading as="h2" size="2xl" mb={4}>Search results for: {data?.searchEntries.searchTerm}</Heading>
+        <Heading as="h2" size="2xl" mb={4}>
+          Search results for: {data?.searchEntries.searchTerm}
+        </Heading>
         <Stack spacing={4}>
           {data?.searchEntries.entries.map((e, index) => (
             <Box key={index}>
