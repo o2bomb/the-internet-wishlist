@@ -55,37 +55,43 @@ export const EditEntry = ({}) => {
       <Formik
         initialValues={{
           title,
-          text,
+          text: text || "",
         }}
         onSubmit={async (values, { setErrors }) => {
           let response;
           let response2;
+          let isSuccess = false;
           try {
-            response = await updateEntry({
-              variables: {
-                id: intId,
-                text: values.text || "",
-              },
-            });
-
-            response2 = await tagEntry({
-              variables: {
-                id: intId,
-                tagIds: removableTags.map((t) => t.id),
-              },
-            });
-
-            if (response.data?.updateEntry) {
-              // send user back to previous page
-              router.back();
+            if (values.text.length > 0 || (text || "").length > 0 ) {
+              response = await updateEntry({
+                variables: {
+                  id: intId,
+                  text: values.text,
+                },
+              });
             }
 
-            toast({
-              title: "Entry udpated successfully!",
-              status: "success",
-              duration: 1000,
-              isClosable: true,
-            });
+            if (removableTags.length > 0) {
+              response2 = await tagEntry({
+                variables: {
+                  id: intId,
+                  tagIds: removableTags.map((t) => t.id),
+                },
+              });
+            }
+
+            isSuccess = !!(response?.data?.updateEntry || response2?.data?.tagEntry); 
+
+            if (isSuccess) {
+              // send user back to previous page
+              router.back();
+              toast({
+                title: "Entry udpated successfully!",
+                status: "success",
+                duration: 1000,
+                isClosable: true,
+              });
+            }
           } catch (e) {
             setErrors({
               text: e.graphQLErrors[0].message,
