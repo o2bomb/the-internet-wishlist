@@ -20,6 +20,7 @@ import { FieldError } from "./FieldError";
 import { Tag } from "../entities/Tag";
 import { Report } from "../entities/Report";
 import { isAuth } from "../middlewares/isAuth";
+import { isAdmin } from "../middlewares/isAdmin";
 import { MyContext } from "../types";
 import { validateCreateEntry } from "../utils/validateCreateEntry";
 import { validateUpdateEntry } from "../utils/validateUpdateEntry";
@@ -115,6 +116,16 @@ export class EntryResolver {
   }
 
   @Query(() => [Entry])
+  @UseMiddleware(isAdmin)
+  async reportedEntries() {
+    const entries = await Entry.createQueryBuilder()
+      .where('"reportCount" > 0')
+      .getMany();
+    
+    return entries;
+  }
+
+  @Query(() => [Entry])
   @UseMiddleware(isAuth)
   async heartedEntries(@Ctx() { req }: MyContext) {
     const hearts = await Heart.find({
@@ -124,7 +135,7 @@ export class EntryResolver {
       relations: ["entry"],
     });
 
-    return hearts ? hearts.map(h => h.entry) : []; 
+    return hearts ? hearts.map((h) => h.entry) : [];
   }
 
   @Mutation(() => Boolean)
