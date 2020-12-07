@@ -163,6 +163,7 @@ export class UserResolver {
 
     // Set user's session
     req.session.userId = user.id;
+    req.session.isAdmin = user.isAdmin;
 
     return {
       user,
