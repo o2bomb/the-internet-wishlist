@@ -70,6 +70,9 @@ export const DeleteEntryButton: React.FC<DeleteEntryButtonProps> = ({
                   },
                 });
 
+                // close modal
+                onClose();
+
                 // send user back to index page
                 if (redirect) {
                   router.push("/");
