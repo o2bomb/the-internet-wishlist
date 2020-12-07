@@ -55,6 +55,7 @@ export class User extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Field()
   @Column({ default: false })
   isAdmin: boolean;
 }

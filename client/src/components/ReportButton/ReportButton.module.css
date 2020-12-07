@@ -1,0 +1,10 @@
+.reportbutton {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  cursor: pointer;
+}
+
+.reportbutton:hover {
+  text-decoration: underline;
+}

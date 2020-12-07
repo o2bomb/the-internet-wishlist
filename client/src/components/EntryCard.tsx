@@ -4,6 +4,7 @@ import { Box, Flex, Heading, Link, Stack, Tag } from "@chakra-ui/react";
 import { RegularEntryFragment, useMeQuery } from "../generated/graphql";
 import { HeartButton } from "./HeartButton";
 import { TagContainer } from "./TagContainer";
+import { ReportButton } from "./ReportButton";
 
 interface EntryCardProps {
   entry: RegularEntryFragment;
@@ -41,8 +42,15 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
           </TagContainer>
         ) : null}
       </Stack>
-      <Flex>
-        {data?.me?.id === creatorId ? null : <HeartButton entry={entry} />}
+      <Flex alignItems="flex-end" direction="column">
+        {data?.me?.id === creatorId ? null : (
+          <>
+            <Box flex={1}>
+              <HeartButton entry={entry} />
+            </Box>
+            <ReportButton id={id}>Report</ReportButton>
+          </>
+        )}
       </Flex>
     </Flex>
   );
