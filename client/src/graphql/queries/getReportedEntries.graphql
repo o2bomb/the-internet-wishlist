@@ -1,0 +1,9 @@
+query GetReportedEntries {
+    reportedEntries {
+        ...RegularEntry
+        reports {
+            ...RegularReport
+        }
+        reportCount
+    }
+}

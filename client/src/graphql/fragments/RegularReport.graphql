@@ -1,0 +1,3 @@
+fragment RegularReport on Report {
+    reason
+}

@@ -5,6 +5,7 @@ import { RegularEntryFragment, useMeQuery } from "../generated/graphql";
 import { HeartButton } from "./HeartButton";
 import { TagContainer } from "./TagContainer";
 import { ReportButton } from "./ReportButton";
+import { DeleteEntryButton } from "./DeleteEntryButton";
 
 interface EntryCardProps {
   entry: RegularEntryFragment;
@@ -45,9 +46,10 @@ export const EntryCard: React.FC<EntryCardProps> = ({ entry }) => {
       <Flex alignItems="flex-end" direction="column">
         {data?.me?.id === creatorId ? null : (
           <>
-            <Box flex={1}>
+            <Stack spacing={2} flex={1}>
               <HeartButton entry={entry} />
-            </Box>
+              {data?.me?.isAdmin ? <DeleteEntryButton id={id} /> : null}
+            </Stack>
             <ReportButton id={id}>Report</ReportButton>
           </>
         )}

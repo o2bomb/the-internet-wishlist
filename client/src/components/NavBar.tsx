@@ -67,6 +67,12 @@ export const NavBar: React.FC<NavBarProps> = ({
               <NextLink href="/user">
                 <MenuItem>View profile</MenuItem>
               </NextLink>
+              {data.me?.isAdmin ? (
+                <NextLink href="/admin">
+                  <MenuItem>Go to admin dashboard</MenuItem>                 
+                </NextLink>
+              ) : null}
+              
               <MenuDivider />
               <MenuItem
                 onClick={async () => {

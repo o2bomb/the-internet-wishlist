@@ -13,6 +13,7 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  reportedEntries: Array<Entry>;
   heartedEntries: Array<Entry>;
   searchEntries: SearchedEntries;
   entry?: Maybe<Entry>;
@@ -233,6 +234,11 @@ export type RegularErrorFragment = (
   & Pick<FieldError, 'field' | 'message'>
 );
 
+export type RegularReportFragment = (
+  { __typename?: 'Report' }
+  & Pick<Report, 'reason'>
+);
+
 export type RegularTagFragment = (
   { __typename?: 'Tag' }
   & Pick<Tag, 'id' | 'displayName' | 'name' | 'createdAt'>
@@ -443,6 +449,22 @@ export type GetHeartedEntriesQuery = (
   )> }
 );
 
+export type GetReportedEntriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetReportedEntriesQuery = (
+  { __typename?: 'Query' }
+  & { reportedEntries: Array<(
+    { __typename?: 'Entry' }
+    & Pick<Entry, 'reportCount'>
+    & { reports: Array<(
+      { __typename?: 'Report' }
+      & RegularReportFragment
+    )> }
+    & RegularEntryFragment
+  )> }
+);
+
 export type GetTagQueryVariables = Exact<{
   id: Scalars['Int'];
 }>;
@@ -543,6 +565,11 @@ export const RegularEntryFragmentDoc = gql`
 }
     ${RegularUserFragmentDoc}
 ${PartialTagFragmentDoc}`;
+export const RegularReportFragmentDoc = gql`
+    fragment RegularReport on Report {
+  reason
+}
+    `;
 export const RegularTagFragmentDoc = gql`
     fragment RegularTag on Tag {
   id
@@ -1012,6 +1039,43 @@ export function useGetHeartedEntriesLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type GetHeartedEntriesQueryHookResult = ReturnType<typeof useGetHeartedEntriesQuery>;
 export type GetHeartedEntriesLazyQueryHookResult = ReturnType<typeof useGetHeartedEntriesLazyQuery>;
 export type GetHeartedEntriesQueryResult = Apollo.QueryResult<GetHeartedEntriesQuery, GetHeartedEntriesQueryVariables>;
+export const GetReportedEntriesDocument = gql`
+    query GetReportedEntries {
+  reportedEntries {
+    ...RegularEntry
+    reports {
+      ...RegularReport
+    }
+    reportCount
+  }
+}
+    ${RegularEntryFragmentDoc}
+${RegularReportFragmentDoc}`;
+
+/**
+ * __useGetReportedEntriesQuery__
+ *
+ * To run a query within a React component, call `useGetReportedEntriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetReportedEntriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetReportedEntriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetReportedEntriesQuery(baseOptions?: Apollo.QueryHookOptions<GetReportedEntriesQuery, GetReportedEntriesQueryVariables>) {
+        return Apollo.useQuery<GetReportedEntriesQuery, GetReportedEntriesQueryVariables>(GetReportedEntriesDocument, baseOptions);
+      }
+export function useGetReportedEntriesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetReportedEntriesQuery, GetReportedEntriesQueryVariables>) {
+          return Apollo.useLazyQuery<GetReportedEntriesQuery, GetReportedEntriesQueryVariables>(GetReportedEntriesDocument, baseOptions);
+        }
+export type GetReportedEntriesQueryHookResult = ReturnType<typeof useGetReportedEntriesQuery>;
+export type GetReportedEntriesLazyQueryHookResult = ReturnType<typeof useGetReportedEntriesLazyQuery>;
+export type GetReportedEntriesQueryResult = Apollo.QueryResult<GetReportedEntriesQuery, GetReportedEntriesQueryVariables>;
 export const GetTagDocument = gql`
     query GetTag($id: Int!) {
   tag(id: $id) {
