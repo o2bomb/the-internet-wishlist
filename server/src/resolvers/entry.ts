@@ -121,7 +121,7 @@ export class EntryResolver {
     const entries = await Entry.createQueryBuilder()
       .where('"reportCount" > 0')
       .getMany();
-    
+
     return entries;
   }
 
@@ -456,7 +456,12 @@ export class EntryResolver {
     @Arg("id", () => Int) id: number,
     @Ctx() { req }: MyContext
   ) {
-    const result = await Entry.delete({ id, creatorId: req.session.userId });
+    let result;
+    if (req.session.isAdmin) {
+      result = await Entry.delete({ id });
+    } else {
+      result = await Entry.delete({ id, creatorId: req.session.userId });
+    }
     if (result.affected === 0) {
       // Failed to delete entry
       throw new ForbiddenError("Failed to delete entry");
