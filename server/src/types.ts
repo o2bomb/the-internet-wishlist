@@ -8,7 +8,8 @@ import { createUserLoader } from "./utils/createUserLoader";
 
 export class MyContext {
   req: Request & {
-    session: Session & Partial<SessionData> & { userId?: number, isAdmin: boolean };
+    session: Session &
+      Partial<SessionData> & { userId?: number; isAdmin: boolean };
   };
   res: Response;
   redis: Redis;
