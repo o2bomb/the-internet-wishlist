@@ -9,3 +9,6 @@
 
 # environment vars
 .env
+
+# data
+/data
