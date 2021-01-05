@@ -1,5 +1,6 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
+    POSTGRES_PASSWORD: string;
     DATABASE_URL: string;
     REDIS_URL: string;
     PORT: string;
