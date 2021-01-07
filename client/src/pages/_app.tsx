@@ -1,11 +1,12 @@
+import type { AppProps } from 'next/app';
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { PaginatedEntries } from "../generated/graphql";
 import { ViewportProvider } from "../utils/ViewportProvider";
-import theme from "../theme";
 import { ChakraProvider } from "@chakra-ui/react";
+import theme from "../theme";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
+  uri: process.env.NEXT_PUBLIC_GRAPHQL_SERVER_URL,
   credentials: "include",
   cache: new InMemoryCache({
     typePolicies: {
@@ -35,7 +36,7 @@ const client = new ApolloClient({
   }),
 });
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ViewportProvider>
