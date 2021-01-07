@@ -1,0 +1,34 @@
+services:
+  redis:
+    image: "redis"
+    # restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+    command: ["redis-server", "--appendonly yes"]
+  postgres:
+    image: "postgres"
+    # restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    env_file:
+      - ./server/.env
+    environment:
+      - POSTGRES_DB=tiw
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./server/.env
+volumes:
+  postgres:
+  redis:
