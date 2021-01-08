@@ -21,7 +21,7 @@ const Register: React.FC<{}> = ({}) => {
       if (newMe) {
         cache.modify({
           fields: {
-            me: (existing) => {
+            me: () => {
               // Update the cache when user is logged in
               const newMeRef = cache.writeFragment({
                 data: newMe,
