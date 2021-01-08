@@ -1,7 +1,7 @@
 services:
   redis:
     image: "redis"
-    # restart: always
+    restart: unless-stopped
     ports:
       - 6379:6379
     volumes:
@@ -9,7 +9,7 @@ services:
     command: ["redis-server", "--appendonly yes"]
   postgres:
     image: "postgres"
-    # restart: always
+    restart: unless-stopped
     ports:
       - 5432:5432
     volumes:
