@@ -20,7 +20,6 @@ import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 import { isServer } from "../utils/isServer";
 import { useViewport } from "../utils/ViewportProvider";
 import { DarkModeSwitch } from "./DarkModeSwitch";
-import { SearchInput } from "./SearchInput";
 
 export interface NavBarProps {
   navigation?: boolean;
@@ -69,10 +68,10 @@ export const NavBar: React.FC<NavBarProps> = ({
               </NextLink>
               {data.me?.isAdmin ? (
                 <NextLink href="/admin">
-                  <MenuItem>Go to admin dashboard</MenuItem>                 
+                  <MenuItem>Go to admin dashboard</MenuItem>
                 </NextLink>
               ) : null}
-              
+
               <MenuDivider />
               <MenuItem
                 onClick={async () => {
