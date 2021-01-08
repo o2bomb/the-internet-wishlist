@@ -29,18 +29,35 @@ Installation prerequisites:
 - Yarn or npm
 
 1. Clone the repo to your local machine
-2. `sudo service postgresql start` to start the PostgreSQL server
-3. `sudo -u postgres createdb tiw` to create a new database called "tiw"
-4. In the `server` directory:
+2. Create a .env file in the `server` and `client` directories (see the .env.example file for an example of what the .env file looks like)
+3. `sudo service postgresql start` to start the PostgreSQL server
+4. `sudo -u postgres createdb tiw` to create a new database called "tiw"
+5. In the `server` directory:
     1. `yarn install` to install all required libraries
     2. `yarn watch` to run the TypeScript compiler
     3. In a new terminal, `yarn dev` to start the server
     - Check that the GraphQL server is running correctly on http://localhost:4000/graphql
-5. In the `client` directory:
+6. In the `client` directory:
     1. `yarn install` to install all required libraries
     2. In a new terminal, `yarn dev` to start the server
     - Check that the client is running correctly on http://localhost:3000
 
+### Using Docker
+Follow the instructions in this section if you want to run the development environment using Docker
+
+Installation prerequisites:
+- [Docker Desktop](https://www.docker.com/get-started)
+- Yarn or npm
+
+1. Clone the repo to your local machine, and **checkout the prod branch**
+2. Create a .env file in the `server` and `client` directories (see the .env.example file for an example of what the .env file looks like)
+3. `docker-compose run --rm -p 4000:4000 server` to start the postgres, redis and server services
+- Check that the GraphQL server is running correctly on http://localhost:4000/graphql
+4. In the `client` directory:
+    1. `yarn install` to install all required libraries
+    2. In a new terminal, `yarn dev` to start the server
+    - Check that the client is running correctly on http://localhost:3000
+- While the Docker services are running, `docker-compose exec postgres psql -U postgres tiw` can be used to gain direct access to the database
 
 ## Things I learned from this project
 - In order for a `<a>` element to be able to be focused on (tabbable) it needs to have the `href` attribute set
@@ -51,3 +68,4 @@ Installation prerequisites:
 - create-react-app and Next have different ways of exposing environment variables. In Next, browser-side vars are exposed by prefixing them with `NEXT_PUBLIC_` (see [here](https://nextjs.org/docs/basic-features/environment-variables))
 - In PostgreSQL, in order to select a table named user, the table name has to be encased in double quotation marks. This is because the `user` keyword exists as an alias for `current_user` (see [here](https://dba.stackexchange.com/questions/75551/returning-rows-in-postgresql-with-a-table-called-user))
 - To bind data coming from Apollo Client to React state, use the `useEffect(..., [data])` hook
+- `psql -U postgres tiw` to gain access to the `tiw` database as the `postgres` user 
