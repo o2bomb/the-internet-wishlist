@@ -48,7 +48,7 @@ export const EditEntry = ({}) => {
     return <Layout>Could not find entry</Layout>;
   }
 
-  const { id, tags, title, text } = data.entry;
+  const { title, text } = data.entry;
 
   return (
     <Layout variant="small">

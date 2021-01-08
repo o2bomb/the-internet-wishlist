@@ -28,7 +28,7 @@ export const DeleteEntryButton: React.FC<DeleteEntryButtonProps> = ({
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [deleteEntry, { error }] = useDeleteEntryMutation({
-    update: (cache, { data }) => {
+    update: (cache, { }) => {
       if (!error) {
         cache.modify({
           fields: {
