@@ -3,7 +3,7 @@ FROM node:14
 # Working directory for application
 WORKDIR /usr/src/app
 
-COPY package.json .
+COPY package.json yarn.lock ./
 
 RUN yarn install
 
