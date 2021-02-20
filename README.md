@@ -1,8 +1,6 @@
 # The Internet Wishlist
 Inspired by https://twitter.com/theiwl?lang=en
 
-Live demo coming soon!
-
 ## Technology stack
 Front end:
 - TypeScript
